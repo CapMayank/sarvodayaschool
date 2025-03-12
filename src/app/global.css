@@ -1,0 +1,71 @@
+/** @format */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+
+body {
+	margin: 0;
+	padding: 0;
+	color: #000000;
+	font-family: "Rubik", sans-serif;
+	font-weight: 700;
+	background-color: #f3f4f6;
+	/* background-image: url("/bgall.jpg"); */
+}
+
+.heading-text-red {
+	--tw-text-opacity: 1;
+	color: rgba(239, 68, 68, var(--tw-text-opacity));
+	text-shadow: #000000 1px 2px 2px;
+}
+
+.heading-text-white {
+	--tw-text-opacity: 1;
+	color: #ffffff;
+	text-shadow: #000000 2px 2px 2px;
+}
+
+.heading-text-yellow {
+	--tw-text-opacity: 1;
+	color: rgba(252, 211, 77, var(--tw-text-opacity));
+	text-shadow: 3px 2px 2px #791620;
+}
+@keyframes marquee {
+	0% {
+		transform: translateX(100%);
+	}
+	100% {
+		transform: translateX(-100%);
+	}
+}
+
+.marquee {
+	white-space: nowrap;
+	overflow: hidden;
+	display: inline-block;
+}
+
+.marquee-content {
+	display: inline-block;
+	animation: marquee 15s linear infinite; /* Adjust duration as needed */
+}
+
+/* Hide scrollbar for Chrome, Safari, and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+	display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.scrollbar-hide {
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
+
+.parallax-bg {
+	background-attachment: fixed;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}

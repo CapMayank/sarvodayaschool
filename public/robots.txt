@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.sarvodayaschool.co.in
+
+# Sitemaps
+Sitemap: https://www.sarvodayaschool.co.in/sitemap.xml
