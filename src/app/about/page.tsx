@@ -57,8 +57,8 @@ const About = () => {
 							</p>
 							<p>
 								🏫 <span className="font-semibold">Advanced Facilities:</span>{" "}
-								Smart classrooms, well-equipped labs, a library, and sports
-								arenas enrich the learning experience.
+								Smart classrooms, well-equipped labs enrich the learning
+								experience.
 							</p>
 							<p>
 								🌍 <span className="font-semibold">Equal Opportunities:</span>{" "}
@@ -89,7 +89,7 @@ const About = () => {
 						Dr. Mangal Vishwakarma
 					</h2>
 					<p className="text-gray-600 font-medium text-lg">
-						PhD, M.Phil, M.Com, B.Ed
+						PhD, M.Phil, M.Com, M.A, B.Ed
 					</p>
 					<p className="text-gray-700 mt-4 text-lg italic">
 						&quot;At Sarvodaya English Higher Secondary School, we believe that

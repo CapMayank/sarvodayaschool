@@ -1,0 +1,37 @@
+/** @format */
+
+const sports = [
+	{ id: 151, class: "Sports", imageUrl: "/gallery/Sports/image1.jpg" },
+	{ id: 152, class: "Sports", imageUrl: "/gallery/Sports/image2.jpg" },
+	{ id: 153, class: "Sports", imageUrl: "/gallery/Sports/image3.jpg" },
+	{ id: 154, class: "Sports", imageUrl: "/gallery/Sports/image4.jpg" },
+	{ id: 155, class: "Sports", imageUrl: "/gallery/Sports/image5.jpg" },
+	{ id: 156, class: "Sports", imageUrl: "/gallery/Sports/image6.jpg" },
+	{ id: 157, class: "Sports", imageUrl: "/gallery/Sports/image7.jpg" },
+	{ id: 158, class: "Sports", imageUrl: "/gallery/Sports/image8.jpg" },
+	{ id: 159, class: "Sports", imageUrl: "/gallery/Sports/image9.jpg" },
+	{ id: 160, class: "Sports", imageUrl: "/gallery/Sports/image10.jpg" },
+	{ id: 161, class: "Sports", imageUrl: "/gallery/Sports/image11.jpg" },
+	{ id: 162, class: "Sports", imageUrl: "/gallery/Sports/image12.jpg" },
+	{ id: 163, class: "Sports", imageUrl: "/gallery/Sports/image13.jpg" },
+	{ id: 164, class: "Sports", imageUrl: "/gallery/Sports/image14.jpg" },
+	{ id: 165, class: "Sports", imageUrl: "/gallery/Sports/image15.jpg" },
+	{ id: 166, class: "Sports", imageUrl: "/gallery/Sports/image16.jpg" },
+	{ id: 167, class: "Sports", imageUrl: "/gallery/Sports/image17.jpg" },
+	{ id: 168, class: "Sports", imageUrl: "/gallery/Sports/image18.jpg" },
+	{ id: 169, class: "Sports", imageUrl: "/gallery/Sports/image19.jpg" },
+	{ id: 170, class: "Sports", imageUrl: "/gallery/Sports/image20.jpg" },
+	{ id: 171, class: "Sports", imageUrl: "/gallery/Sports/image21.jpg" },
+	{ id: 172, class: "Sports", imageUrl: "/gallery/Sports/image22.jpg" },
+	{ id: 173, class: "Sports", imageUrl: "/gallery/Sports/image23.jpg" },
+	{ id: 174, class: "Sports", imageUrl: "/gallery/Sports/image24.jpg" },
+	{ id: 175, class: "Sports", imageUrl: "/gallery/Sports/image25.jpg" },
+	{ id: 176, class: "Sports", imageUrl: "/gallery/Sports/image26.jpg" },
+	{ id: 177, class: "Sports", imageUrl: "/gallery/Sports/image27.jpg" },
+	{ id: 178, class: "Sports", imageUrl: "/gallery/Sports/image28.jpg" },
+	{ id: 179, class: "Sports", imageUrl: "/gallery/Sports/image29.jpg" },
+	{ id: 180, class: "Sports", imageUrl: "/gallery/Sports/image30.jpg" },
+	{ id: 181, class: "Sports", imageUrl: "/gallery/Sports/image31.jpg" },
+];
+
+export default sports;
