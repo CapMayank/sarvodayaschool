@@ -24,7 +24,7 @@ export default function CulturalGallery() {
 		<>
 			<Header title={"Cultural Programme"} />
 
-			<div>
+			{/* <div>
 				<div className="flex justify-center md:m-4 md:my-20">
 					<div className="grid grid-cols-1 md:grid-cols-4 md:w-[90%] gap-4 justify-center">
 						{culturalImages.map((image, index) => (
@@ -39,6 +39,54 @@ export default function CulturalGallery() {
 									width={500}
 									height={500}
 									className="rounded-sm"
+									priority={index < 4} // Prioritize the first 4 images
+									loading={index >= 4 ? "lazy" : "eager"} // Lazy load other images
+								/>
+							</div>
+						))}
+					</div>
+				</div>
+			</div> */}
+
+			{/* <div>
+				<div className="flex justify-center md:m-4 md:my-20">
+					<div className="grid grid-cols-1 md:grid-cols-4 md:w-[90%] gap-4 justify-center items-start">
+						{culturalImages.map((image, index) => (
+							<div
+								key={image.id}
+								className="p-4 flex flex-col backdrop-blur-sm bg-red-500/80 rounded-md hover:scale-105 transform transition duration-500 ease-in-out hover:shadow-2xl hover:bg-red-500/90 cursor-pointer"
+								onClick={() => openModal(image.imageUrl)}
+							>
+								<Image
+									src={image.imageUrl}
+									alt={image.class}
+									width={500}
+									height={500}
+									className="rounded-sm object-cover w-full aspect-auto"
+									priority={index < 4} // Prioritize the first 4 images
+									loading={index >= 4 ? "lazy" : "eager"} // Lazy load other images
+								/>
+							</div>
+						))}
+					</div>
+				</div>
+			</div> */}
+
+			<div>
+				<div className="flex justify-center md:m-4 md:my-20">
+					<div className="columns-1 md:columns-4 gap-4 w-[90%]">
+						{culturalImages.map((image, index) => (
+							<div
+								key={image.id}
+								className="mb-4 backdrop-blur-sm bg-red-500/80 rounded-md hover:scale-105 transform transition duration-500 ease-in-out hover:shadow-2xl hover:bg-red-500/90 cursor-pointer break-inside-avoid"
+								onClick={() => openModal(image.imageUrl)}
+							>
+								<Image
+									src={image.imageUrl}
+									alt={image.class}
+									width={500}
+									height={500}
+									className="rounded-sm object-cover w-full"
 									priority={index < 4} // Prioritize the first 4 images
 									loading={index >= 4 ? "lazy" : "eager"} // Lazy load other images
 								/>

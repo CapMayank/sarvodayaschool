@@ -1,9 +1,9 @@
 /** @format */
 
 export const metadata = {
-	title: "Gallery",
+	title: "Careers",
 	description:
-		"Explore our gallery to see images of events, activities, and facilities at Sarvodaya English Higher Secondary School Lakhnadon.",
+		"Join our team at Sarvodaya English Higher Secondary School Lakhnadon.",
 };
 
 export default function CareersLayout({
