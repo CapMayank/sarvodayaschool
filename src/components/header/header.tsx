@@ -14,9 +14,9 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
 	return (
 		<section className="text-center my-8 p-8 ">
 			<Image
-				className="absolute inset-0 z-[-1] w-full h-[1555px] md:h-[500px] object-cover"
+				className="absolute inset-0 z-[-1] w-full h-[1024px] md:h-[500px] object-cover"
 				src="/back.webp"
-				alt="School Building"
+				alt="Sarvodaya School Students"
 				width={2000}
 				height={1333}
 			></Image>

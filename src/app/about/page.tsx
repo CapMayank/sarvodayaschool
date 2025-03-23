@@ -77,7 +77,7 @@ const About = () => {
 			{/* Director Section */}
 			<div className="flex flex-col md:flex-row items-center max-w-4xl mx-auto mt-4 mb-4 p-10 bg-white shadow-xl rounded-lg">
 				<Image
-					src="/director.png"
+					src="/directors.png"
 					alt="Dr. Mangal Vishwakarma"
 					width={220}
 					height={220}

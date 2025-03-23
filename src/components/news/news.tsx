@@ -5,6 +5,7 @@ import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
 import { RxDotFilled } from "react-icons/rx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 const News = () => {
 	const slides = [
@@ -80,7 +81,11 @@ const News = () => {
 						{slides[currentIndex].description}
 					</p>
 					<p className="text-white text-lg font-bold">
-						<FontAwesomeIcon icon={faCalendar} size="1x" className="mr-4" />
+						<FontAwesomeIcon
+							icon={faCalendar as IconProp}
+							size="1x"
+							className="mr-4"
+						/>
 						{slides[currentIndex].date}
 					</p>
 				</div>

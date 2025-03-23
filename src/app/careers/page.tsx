@@ -8,12 +8,69 @@ import Header from "@/components/header/header";
 import Modal from "@/components/modals/modals";
 import Image from "next/image";
 
+const districts: { [key: string]: string[] } = {
+	Seoni: [
+		"Lakhnadon",
+		"Seoni",
+		"Ghansor",
+		"Keolari",
+		"Barghat",
+		"Kurai",
+		"Dhanora",
+	],
+	Jabalpur: [
+		"Jabalpur",
+		"Shahpura",
+		"Panagar",
+		"Sihora",
+		"Majholi",
+		"Kundam",
+		"Patan",
+	],
+	Narsinghpur: ["Narsinghpur", "Gadarwara", "Tendukheda", "Kareli", "Gotegaon"],
+	Mandla: ["Mandla", "Bichhiya", "Ghughri", "Nainpur", "Niwas"],
+	Balaghat: [
+		"Balaghat",
+		"Baihar",
+		"Katangi",
+		"Lanji",
+		"Waraseoni",
+		"Khairlanji",
+	],
+	Chhindwara: [
+		"Chhindwara",
+		"Parasia",
+		"Sausar",
+		"Pandhurna",
+		"Mohan Nagar",
+		"Amarwara",
+	],
+	Betul: ["Betul", "Multai", "Amla", "Sarni", "Bhainsdehi"],
+	Narmadapuram: [
+		"Narmadapuram",
+		"Itarsi",
+		"Pipariya",
+		"Seoni Malwa",
+		"Sohagpur",
+	],
+	Raisen: [
+		"Raisen",
+		"Begamganj",
+		"Goharganj",
+		"Obedullaganj",
+		"Silwani",
+		"Udaipura",
+	],
+};
+
 const Careers: React.FC = () => {
 	const [formData, setFormData] = useState({
 		name: "",
 		gender: "",
 		mobileNumber: "",
 		address: "",
+		district: "",
+		block: "",
 		qualifications: "",
 		professionalQualification: "",
 		subject: "",
@@ -28,6 +85,13 @@ const Careers: React.FC = () => {
 	) => {
 		const { name, value } = e.target;
 		setFormData({ ...formData, [name]: value });
+
+		// Reset block selection when district changes
+		if (name === "district") {
+			setFormData({ ...formData, district: value, block: "" });
+		} else {
+			setFormData({ ...formData, [name]: value });
+		}
 	};
 
 	const handleCaptchaChange = (value: string | null) => {
@@ -37,28 +101,23 @@ const Careers: React.FC = () => {
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		// Construct WhatsApp message with form data
-		let message = `
-      Name: ${formData.name}
-      Gender: ${formData.gender}
-      Mobile Number: ${formData.mobileNumber}
-      Address: ${formData.address}
-      Qualifications: ${formData.qualifications}
-      Professional Qualification: ${formData.professionalQualification}
-      Subject: ${formData.subject}
-      Class: ${formData.class}
-      Experience: ${formData.experience} years
-    `;
+		let message = `Name: ${formData.name}
+		Gender: ${formData.gender}
+		Mobile Number: ${formData.mobileNumber}
+		Address: ${formData.address}
+		District: ${formData.district}
+		Block: ${formData.block}
+		Qualifications: ${formData.qualifications}
+		Professional Qualification: ${formData.professionalQualification}
+		Subject: ${formData.subject}
+		Class: ${formData.class}
+		Experience: ${formData.experience} years`;
 
-		// Encode message for URL
 		const encodedMessage = encodeURIComponent(message);
-
-		// Construct WhatsApp URL with the message
 		const whatsappURL = `https://wa.me/918989646850?text=${encodedMessage}`;
-
-		// Open WhatsApp link
 		window.open(whatsappURL, "_blank")?.focus();
 	};
+
 	const [showModal, setShowModal] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -78,8 +137,8 @@ const Careers: React.FC = () => {
 						</h2>
 						<p className="text-lg text-gray-600">
 							<strong className="text-red-600">Subjects:</strong> Mathematics,
-							Biology, Physics, Chemistry, Sanskrit, Sociology, Commerce, Hindi,
-							English
+							Biology, Physics, Chemistry, Sanskrit, Social-Science, Commerce,
+							Hindi, English
 						</p>
 						<p className="text-lg text-gray-600">
 							<strong className="text-red-600">Teaching Levels:</strong> Classes
@@ -102,17 +161,17 @@ const Careers: React.FC = () => {
 						</p>
 						<p className="text-lg text-gray-600">
 							<strong className="text-red-600">Starting Salary:</strong> Rs.
-							20,000/- to Rs. 25,000/- per month (negotiable based on
+							15,000/- to Rs. 25,000/- per month (negotiable based on
 							qualifications and experience)
 						</p>
 
 						<Image
-							src="/careers.png"
+							src="/recruitment.png"
 							alt="Teacher Recruitment Poster"
 							width={1000}
 							height={1000}
 							className="rounded-sm mt-5"
-							onClick={() => openModal("/careers.png")}
+							onClick={() => openModal("/recruitment.png")}
 						/>
 					</div>
 					<div className="md:w-[50%] bg-white bg-opacity-90 p-5 rounded-lg shadow-lg  lg:w-1/2">
@@ -165,6 +224,52 @@ const Careers: React.FC = () => {
 									className="w-full p-2 border border-red-600 rounded"
 								/>
 							</div>
+
+							{/* District Dropdown */}
+							<div className="mb-4">
+								<label htmlFor="district" className="block font-bold mb-1">
+									District: <span className="text-red-600">*</span>
+								</label>
+								<select
+									id="district"
+									name="district"
+									value={formData.district}
+									onChange={handleChange}
+									required
+									className="w-full p-2 border border-red-600 rounded"
+								>
+									<option value="">Select District</option>
+									{Object.keys(districts).map((district) => (
+										<option key={district} value={district}>
+											{district}
+										</option>
+									))}
+								</select>
+							</div>
+
+							<div className="mb-4">
+								<label htmlFor="block" className="block font-bold mb-1">
+									Block: <span className="text-red-600">*</span>
+								</label>
+								<select
+									id="block"
+									name="block"
+									value={formData.block}
+									onChange={handleChange}
+									required
+									className="w-full p-2 border border-red-600 rounded"
+									disabled={!formData.district} // Disable if no district is selected
+								>
+									<option value="">Select Block</option>
+									{formData.district &&
+										districts[formData.district]?.map((block: string) => (
+											<option key={block} value={block}>
+												{block}
+											</option>
+										))}
+								</select>
+							</div>
+
 							<div className="mb-4">
 								<label htmlFor="address" className="block font-bold mb-1">
 									Address: <span className="text-red-600">*</span>

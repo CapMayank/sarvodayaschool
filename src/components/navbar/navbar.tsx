@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebook, faYoutube } from "@fortawesome/free-brands-svg-icons";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import Link from "next/link";
 
 const Navbar = () => {
@@ -43,13 +44,13 @@ const Navbar = () => {
 							href="https://www.youtube.com/@sarvodayaschoollakhnadon"
 							className="hover:text-red-800"
 						>
-							<FontAwesomeIcon icon={faYoutube} size="2x" />
+							<FontAwesomeIcon icon={faYoutube as IconProp} size="2x" />
 						</a>
 						<a
 							href="https://www.facebook.com/people/Sarvodaya-English-Higher-Secondary-School-Lakhnadon/61559633950802/"
 							className="hover:text-red-800"
 						>
-							<FontAwesomeIcon icon={faFacebook} size="2x" />
+							<FontAwesomeIcon icon={faFacebook as IconProp} size="2x" />
 						</a>
 					</div>
 				</div>
@@ -57,7 +58,7 @@ const Navbar = () => {
 					<a href="/admission">Get Admission</a>
 					<div className="justify-end items-center text-white md:hidden">
 						<button onClick={toggleMenu}>
-							<FontAwesomeIcon icon={faBars} size="1x" />
+							<FontAwesomeIcon icon={faBars as IconProp} size="1x" />
 						</button>
 					</div>
 				</div>
@@ -131,7 +132,7 @@ const Navbar = () => {
 					<div className=" marquee p-2 text-red-600 text-2xl font-sans font-black flex md:w-[90%] justify-between backdrop-blur-sm  bg-white/30">
 						<div className="marquee-content">
 							Teacher Requirement 2025-26 Subject-
-							Maths/Bio/Physics/Chemistry/Sanskrit/Sociology/Commerce/Hindi/English
+							Maths/Bio/Physics/Chemistry/Sanskrit/Social-Science/Commerce/Hindi/English
 							| From Class 6th to 12th | Starting Salary From Rs. 20000/- to Rs.
 							25000/- |Contact:+91 8989646850
 						</div>

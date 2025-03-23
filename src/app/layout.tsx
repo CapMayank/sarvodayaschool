@@ -1,6 +1,7 @@
 /** @format */
 
 import Navbar from "@/components/navbar/navbar";
+import Script from "next/script"; // Import next/script
 import "./global.css";
 import Banner from "@/components/banner/banner";
 
@@ -20,8 +21,27 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en">
+			<head>
+				{/* Google Analytics using next/script */}
+				<Script
+					strategy="afterInteractive"
+					src="https://www.googletagmanager.com/gtag/js?id=G-MCB7FZGZKK"
+				/>
+				<Script
+					id="google-analytics"
+					strategy="afterInteractive"
+					dangerouslySetInnerHTML={{
+						__html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-MCB7FZGZKK');
+            `,
+					}}
+				/>
+			</head>
 			<body>
-				{<Navbar />}
+				<Navbar />
 				{children}
 			</body>
 		</html>

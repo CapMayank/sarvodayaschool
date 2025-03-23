@@ -202,12 +202,12 @@ const AdmissionForm: React.FC = () => {
 					<div className="flex md:w-[50%] justify-center p-2 my-2 border  bg-white bg-opacity-90 rounded-lg shadow-lg">
 						<div className="text-center">
 							<Image
-								src="/fee_structure.png"
+								src="/fee_structure26.png"
 								alt="Fee Structure"
 								width={1000}
 								height={1000}
 							/>
-							<a href="/fee_structure.png" download="fee_structure.png">
+							<a href="/fee_structure26.png" download="fee_structure.png">
 								<button className="m-2 p-3 bg-red-600 text-white rounded-lg hover:bg-red-700">
 									Download Fee Structure
 								</button>
