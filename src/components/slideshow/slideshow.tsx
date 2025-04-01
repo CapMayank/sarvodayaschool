@@ -6,6 +6,8 @@ import { RxDotFilled } from "react-icons/rx";
 import Modal from "@/components/modals/modals";
 
 const slides = [
+	{ url: "/slideshow/8th2025.png" },
+	{ url: "/slideshow/5th2025.png" },
 	{ url: "/slideshow/result2024.png" },
 	{ url: "/slideshow/12th.png" },
 	{ url: "/slideshow/10th.png" },
@@ -27,7 +29,7 @@ const Slideshow = () => {
 	useEffect(() => {
 		const interval = setInterval(() => {
 			nextSlide();
-		}, 5000);
+		}, 10000);
 		return () => clearInterval(interval);
 	}, [currentIndex, nextSlide]);
 

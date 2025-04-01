@@ -1,14 +1,17 @@
 /** @format */
 
 "use client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import achievements from "@/lib/achievement/achievements";
+import Modal from "@/components/modals/modals";
 
 export default function AchievementsSection() {
 	const scrollRef = useRef<HTMLDivElement>(null);
+	const [showModal, setShowModal] = useState(false);
+	const [selectedImage, setSelectedImage] = useState("");
 
 	const scrollLeft = () => {
 		if (scrollRef.current) {
@@ -20,6 +23,11 @@ export default function AchievementsSection() {
 		if (scrollRef.current) {
 			scrollRef.current.scrollBy({ left: 350, behavior: "smooth" });
 		}
+	};
+
+	const openModal = (imageUrl: string) => {
+		setSelectedImage(imageUrl);
+		setShowModal(true);
 	};
 
 	return (
@@ -66,6 +74,7 @@ export default function AchievementsSection() {
 							whileInView={{ opacity: 1, x: 0 }}
 							transition={{ duration: 0.5, delay: index * 0.2 }}
 							viewport={{ once: true }}
+							// onClick={() => openModal(achievement.imageUrl)}
 						>
 							{/* Achievement Image */}
 							<Image
@@ -85,6 +94,13 @@ export default function AchievementsSection() {
 					))}
 				</div>
 			</div>
+
+			{/* Modal Component */}
+			<Modal
+				showModal={showModal}
+				setShowModal={setShowModal}
+				imageUrl={selectedImage}
+			/>
 		</div>
 	);
 }

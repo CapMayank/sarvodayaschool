@@ -1,14 +1,17 @@
 /** @format */
 
 "use client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import facilities from "@/lib/facilities/facilities";
+import Modal from "@/components/modals/modals";
 
 export default function FacilitiesSection() {
 	const scrollRef = useRef<HTMLDivElement>(null);
+	const [showModal, setShowModal] = useState(false);
+	const [selectedImage, setSelectedImage] = useState("");
 
 	const scrollLeft = () => {
 		if (scrollRef.current) {
@@ -20,6 +23,10 @@ export default function FacilitiesSection() {
 		if (scrollRef.current) {
 			scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
 		}
+	};
+	const openModal = (imageUrl: string) => {
+		setSelectedImage(imageUrl);
+		setShowModal(true);
 	};
 
 	return (
@@ -62,6 +69,7 @@ export default function FacilitiesSection() {
 						whileInView={{ opacity: 1, x: 0 }}
 						transition={{ duration: 0.5, delay: index * 0.2 }}
 						viewport={{ once: true }}
+						onClick={() => openModal(facility.imageUrl)}
 					>
 						{/* Facility Image */}
 						<Image
@@ -92,6 +100,13 @@ export default function FacilitiesSection() {
 					Explore Admissions
 				</motion.a>
 			</div> */}
+
+			{/* Modal Component */}
+			<Modal
+				showModal={showModal}
+				setShowModal={setShowModal}
+				imageUrl={selectedImage}
+			/>
 		</div>
 	);
 }
