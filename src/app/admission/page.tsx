@@ -6,6 +6,62 @@ import Image from "next/image";
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
 
+// District and block data
+const districts: { [key: string]: string[] } = {
+	Seoni: [
+		"Lakhnadon",
+		"Seoni",
+		"Ghansor",
+		"Keolari",
+		"Barghat",
+		"Kurai",
+		"Dhanora",
+	],
+	Jabalpur: [
+		"Jabalpur",
+		"Shahpura",
+		"Panagar",
+		"Sihora",
+		"Majholi",
+		"Kundam",
+		"Patan",
+	],
+	Narsinghpur: ["Narsinghpur", "Gadarwara", "Tendukheda", "Kareli", "Gotegaon"],
+	Mandla: ["Mandla", "Bichhiya", "Ghughri", "Nainpur", "Niwas"],
+	Balaghat: [
+		"Balaghat",
+		"Baihar",
+		"Katangi",
+		"Lanji",
+		"Waraseoni",
+		"Khairlanji",
+	],
+	Chhindwara: [
+		"Chhindwara",
+		"Parasia",
+		"Sausar",
+		"Pandhurna",
+		"Mohan Nagar",
+		"Amarwara",
+	],
+	Betul: ["Betul", "Multai", "Amla", "Sarni", "Bhainsdehi"],
+	Narmadapuram: [
+		"Narmadapuram",
+		"Itarsi",
+		"Pipariya",
+		"Seoni Malwa",
+		"Sohagpur",
+	],
+	Raisen: [
+		"Raisen",
+		"Begamganj",
+		"Goharganj",
+		"Obedullaganj",
+		"Silwani",
+		"Udaipura",
+	],
+};
+
 const AdmissionForm: React.FC = () => {
 	const [formData, setFormData] = useState({
 		studentName: "",
@@ -13,6 +69,8 @@ const AdmissionForm: React.FC = () => {
 		fatherName: "",
 		mobileNumber: "",
 		class: "",
+		district: "",
+		block: "",
 		address: "",
 	});
 
@@ -22,7 +80,13 @@ const AdmissionForm: React.FC = () => {
 		>
 	) => {
 		const { name, value } = e.target;
-		setFormData({ ...formData, [name]: value });
+
+		// Reset block selection when district changes
+		if (name === "district") {
+			setFormData({ ...formData, district: value, block: "" });
+		} else {
+			setFormData({ ...formData, [name]: value });
+		}
 	};
 
 	const handleCaptchaChange = (value: string | null) => {
@@ -38,6 +102,8 @@ const AdmissionForm: React.FC = () => {
 			fatherName,
 			mobileNumber,
 			class: admissionClass,
+			district,
+			block,
 			address,
 		} = formData;
 
@@ -47,6 +113,8 @@ const AdmissionForm: React.FC = () => {
       Father's Name: ${fatherName}
       Mobile Number: ${mobileNumber}
       Class for Admission: ${admissionClass}
+      District: ${district}
+      Block: ${block}
       Address: ${address}
     `;
 
@@ -168,6 +236,59 @@ const AdmissionForm: React.FC = () => {
 										<option value="12th">12th</option>
 									</select>
 								</div>
+
+								{/* District Dropdown - New */}
+								<div>
+									<label
+										htmlFor="district"
+										className="block font-bold mb-2 text-gray-700"
+									>
+										District:
+									</label>
+									<select
+										id="district"
+										name="district"
+										value={formData.district}
+										onChange={handleChange}
+										required
+										className="w-full p-2 border border-red-600 rounded"
+									>
+										<option value="">Select District</option>
+										{Object.keys(districts).map((district) => (
+											<option key={district} value={district}>
+												{district}
+											</option>
+										))}
+									</select>
+								</div>
+
+								{/* Block Dropdown - New */}
+								<div>
+									<label
+										htmlFor="block"
+										className="block font-bold mb-2 text-gray-700"
+									>
+										Block:
+									</label>
+									<select
+										id="block"
+										name="block"
+										value={formData.block}
+										onChange={handleChange}
+										required
+										className="w-full p-2 border border-red-600 rounded"
+										disabled={!formData.district} // Disable if no district is selected
+									>
+										<option value="">Select Block</option>
+										{formData.district &&
+											districts[formData.district]?.map((block: string) => (
+												<option key={block} value={block}>
+													{block}
+												</option>
+											))}
+									</select>
+								</div>
+
 								<div>
 									<label
 										htmlFor="address"
@@ -199,7 +320,7 @@ const AdmissionForm: React.FC = () => {
 							</form>
 						</div>
 					</div>
-					<div className="flex md:w-[50%] justify-center p-2 my-2 border  bg-white bg-opacity-90 rounded-lg shadow-lg">
+					<div className="flex md:w-[50%] justify-center p-2 my-2 border bg-white bg-opacity-90 rounded-lg shadow-lg">
 						<div className="text-center">
 							<Image
 								src="/fee_structure26.png"

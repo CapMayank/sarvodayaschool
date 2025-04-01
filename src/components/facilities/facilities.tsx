@@ -1,17 +1,16 @@
 /** @format */
 
 "use client";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import facilities from "@/lib/facilities/facilities";
-import Modal from "@/components/modals/modals";
 
 export default function FacilitiesSection() {
 	const scrollRef = useRef<HTMLDivElement>(null);
-	const [showModal, setShowModal] = useState(false);
-	const [selectedImage, setSelectedImage] = useState("");
+	const router = useRouter();
 
 	const scrollLeft = () => {
 		if (scrollRef.current) {
@@ -24,14 +23,14 @@ export default function FacilitiesSection() {
 			scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
 		}
 	};
-	const openModal = (imageUrl: string) => {
-		setSelectedImage(imageUrl);
-		setShowModal(true);
+
+	// Navigate to facility details page
+	const openFacilityPage = (id: string) => {
+		router.push(`/facilities/${id}`);
 	};
 
 	return (
 		<div className="relative w-full bg-gray-100 py-10">
-			{/* Section Title */}
 			<motion.h2
 				className="text-5xl font-bold text-center heading-text-red mb-12 drop-shadow-lg"
 				initial={{ opacity: 0, y: -30 }}
@@ -61,15 +60,15 @@ export default function FacilitiesSection() {
 				ref={scrollRef}
 				className="w-full flex space-x-6 px-8 py-6 overflow-x-auto scrollbar-hide scroll-smooth snap-x relative z-10"
 			>
-				{facilities.map((facility, index) => (
+				{facilities.map((facility) => (
 					<motion.div
-						key={index}
+						key={facility.id}
 						className="relative min-w-[300px] md:min-w-[400px] backdrop-blur-lg bg-red-500/30 rounded-xl shadow-lg p-4 cursor-pointer hover:shadow-2xl transition-all snap-center"
 						initial={{ opacity: 0, x: 50 }}
 						whileInView={{ opacity: 1, x: 0 }}
-						transition={{ duration: 0.5, delay: index * 0.2 }}
+						transition={{ duration: 0.5, delay: Number(facility.id) * 0.2 }}
 						viewport={{ once: true }}
-						onClick={() => openModal(facility.imageUrl)}
+						onClick={() => openFacilityPage(facility.id)}
 					>
 						{/* Facility Image */}
 						<Image
@@ -88,25 +87,6 @@ export default function FacilitiesSection() {
 					</motion.div>
 				))}
 			</div>
-
-			{/* Call to Action */}
-			{/* <div className="flex justify-center mt-12">
-				<motion.a
-					href="/admission"
-					className="px-8 py-4 text-white bg-red-500 hover:bg-red-600 rounded-lg shadow-lg transition duration-300 text-lg font-semibold"
-					whileHover={{ scale: 1.1 }}
-					whileTap={{ scale: 0.95 }}
-				>
-					Explore Admissions
-				</motion.a>
-			</div> */}
-
-			{/* Modal Component */}
-			<Modal
-				showModal={showModal}
-				setShowModal={setShowModal}
-				imageUrl={selectedImage}
-			/>
 		</div>
 	);
 }

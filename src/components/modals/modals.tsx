@@ -96,13 +96,13 @@ const Modal: React.FC<ModalProps> = ({ showModal, setShowModal, imageUrl }) => {
 				</div>
 
 				{/* Download Button */}
-				<button
+				{/* <button
 					className="absolute bottom-3 right-3 bg-red-600 text-white rounded-full p-2 text-lg hover:bg-red-500 transition z-10"
 					onClick={downloadImage}
 					aria-label="Download"
 				>
 					<FaDownload />
-				</button>
+				</button> */}
 			</div>
 		</div>
 	);
