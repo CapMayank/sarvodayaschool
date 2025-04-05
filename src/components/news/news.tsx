@@ -1,11 +1,9 @@
 /** @format */
 "use client";
-import React, { useState } from "react";
-import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
-import { RxDotFilled } from "react-icons/rx";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar } from "@fortawesome/free-solid-svg-icons";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
+import { FaCalendarAlt } from "react-icons/fa";
 
 const News = () => {
 	const slides = [
@@ -26,90 +24,128 @@ const News = () => {
 		{
 			url: "/news/annual_function.jpg",
 			date: "Jan 21 2025",
-			title: "Annual Funtion Celebration",
+			title: "Annual Function Celebration",
 			description:
-				"Sarvodaya English Higher Secondary School celebrated its annual function with great enthusiasm. The students performed various cultural programs, and the school principal and teachers congratulated the students on their performances. The school administration is looking forward to the upcoming academic year.",
+				"Sarvodaya English Higher Secondary School celebrated its annual function with great enthusiasm. The students performed various cultural programs, and the school principal and teachers congratulated the students on their performances.",
 		},
-
-		// {
-		// 	url: "/news/summerbreak.jpg",
-		// 	date: "Apr 8 2024",
-		// 	title: "Classes will Resume After Summer Break",
-		// 	description:
-		// 		"The class will resume on 1 5 June 2024 after the summer break. The school administration is looking forward to welcoming the students back to school, and is planning various activities and events for the upcoming academic year.",
-		// },
 	];
 
 	const [currentIndex, setCurrentIndex] = useState(0);
 
+	const nextSlide = React.useCallback(() => {
+		setCurrentIndex((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+	}, [slides.length]);
+
+	// Auto-play functionality
+	useEffect(() => {
+		const timer = setInterval(() => {
+			nextSlide();
+		}, 5000);
+
+		return () => clearInterval(timer);
+	}, [nextSlide]);
+
 	const prevSlide = () => {
-		const isFirstSlide = currentIndex === 0;
-		const newIndex = isFirstSlide ? slides.length - 1 : currentIndex - 1;
-		setCurrentIndex(newIndex);
-	};
-
-	const nextSlide = () => {
-		const isLastSlide = currentIndex === slides.length - 1;
-		const newIndex = isLastSlide ? 0 : currentIndex + 1;
-		setCurrentIndex(newIndex);
-	};
-
-	const goToSlide = (slideIndex: number) => {
-		setCurrentIndex(slideIndex);
+		setCurrentIndex((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
 	};
 
 	return (
-		<div className="max-w-[1400px] h-[780px] w-full m-auto py-8 px-4 mb-28 relative group">
-			<div className="m-2">
-				<h2 className="text-center heading-text-red text-4xl">News</h2>
-				<h2 className="text-center heading-text-yellow text-4xl">
-					Recent from News
-				</h2>
-			</div>
+		<div className="py-16 bg-gradient-to-b from-white to-gray-50">
+			<div className="max-w-7xl mx-auto px-4">
+				{/* Section Header */}
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					className="text-center mb-12"
+				>
+					<h2 className="text-4xl font-bold text-gray-900 mb-2">
+						Latest <span className="text-red-600">News</span>
+					</h2>
+					<div className="w-24 h-1 bg-gradient-to-r from-red-600 to-red-500 mx-auto rounded-full" />
+				</motion.div>
 
-			<div
-				style={{
-					backgroundImage: `url(${slides[currentIndex].url})`,
-				}}
-				className="flex justify-center items-end p-8 w-full h-full rounded-2xl bg-center bg-cover duration-500"
-			>
-				<div className="backdrop-blur-lg bg-red-500/30 p-4 rounded-md">
-					<h1 className="text-yellow-500 text-4xl font-black">
-						{slides[currentIndex].title}
-					</h1>
-					<p className="text-white hidden md:block text-lg font-bold">
-						{slides[currentIndex].description}
-					</p>
-					<p className="text-white text-lg font-bold">
-						<FontAwesomeIcon
-							icon={faCalendar as IconProp}
-							size="1x"
-							className="mr-4"
-						/>
-						{slides[currentIndex].date}
-					</p>
-				</div>
-			</div>
+				{/* News Slider */}
+				<div className="relative h-[600px] md:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
+					<AnimatePresence mode="wait">
+						<motion.div
+							key={currentIndex}
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={{ duration: 0.5 }}
+							className="absolute inset-0"
+						>
+							{/* Background Image */}
+							<div
+								className="absolute inset-0 bg-cover bg-center"
+								style={{
+									backgroundImage: `url(${slides[currentIndex].url})`,
+								}}
+							>
+								<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+							</div>
 
-			{/* Left Arrow */}
-			<div className=" group-hover:block absolute top-1/2 left-5 transform -translate-y-1/2 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer">
-				<BsChevronCompactLeft onClick={prevSlide} size={30} />
-			</div>
-			{/* Right Arrow */}
-			<div className=" group-hover:block absolute top-1/2 right-5 transform -translate-y-1/2 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer">
-				<BsChevronCompactRight onClick={nextSlide} size={30} />
-			</div>
+							{/* Content */}
+							<motion.div
+								initial={{ y: 20, opacity: 0 }}
+								animate={{ y: 0, opacity: 1 }}
+								transition={{ delay: 0.2 }}
+								className="absolute bottom-0 left-0 right-0 px-16 pb-8 pt-16" // Added horizontal padding
+							>
+								<div className="max-w-3xl mx-auto">
+									<div className="flex items-center gap-2 text-red-500 mb-4">
+										<FaCalendarAlt />
+										<span className="text-white">
+											{slides[currentIndex].date}
+										</span>
+									</div>
+									<h3 className="text-2xl md:text-4xl font-bold text-white mb-4">
+										{slides[currentIndex].title}
+									</h3>
+									<p className="text-white/90 text-base md:text-lg leading-relaxed line-clamp-3 md:line-clamp-none">
+										{slides[currentIndex].description}
+									</p>
+								</div>
+							</motion.div>
+						</motion.div>
+					</AnimatePresence>
 
-			<div className="flex justify-center py-2">
-				{slides.map((_, slideIndex) => (
-					<div
-						key={slideIndex}
-						onClick={() => goToSlide(slideIndex)}
-						className="text-2xl cursor-pointer"
-					>
-						<RxDotFilled />
+					{/* Navigation Buttons */}
+					<div className="absolute inset-y-0 left-4 right-4 flex items-center justify-between pointer-events-none">
+						<button
+							onClick={prevSlide}
+							className="p-2 rounded-full bg-black/20 backdrop-blur-lg hover:bg-black/40 transition-all duration-300 text-white pointer-events-auto"
+							aria-label="Previous slide"
+						>
+							<BsChevronLeft size={24} />
+						</button>
+						<button
+							onClick={nextSlide}
+							className="p-2 rounded-full bg-black/20 backdrop-blur-lg hover:bg-black/40 transition-all duration-300 text-white pointer-events-auto"
+							aria-label="Next slide"
+						>
+							<BsChevronRight size={24} />
+						</button>
 					</div>
-				))}
+
+					{/* Indicators */}
+					<div className="absolute bottom-2 md:bottom-4 left-0 right-0 pointer-events-none">
+						<div className="flex justify-center gap-2">
+							{slides.map((_, index) => (
+								<button
+									key={index}
+									onClick={() => setCurrentIndex(index)}
+									className={`w-2 h-2 rounded-full transition-all duration-300 pointer-events-auto ${
+										currentIndex === index
+											? "w-8 bg-red-500"
+											: "bg-white/50 hover:bg-white"
+									}`}
+									aria-label={`Go to slide ${index + 1}`}
+								/>
+							))}
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	);

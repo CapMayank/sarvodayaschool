@@ -1,8 +1,10 @@
 /** @format */
+
 "use client";
+
 import React, { useState, useEffect, useCallback } from "react";
 import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
-import { RxDotFilled } from "react-icons/rx";
+import { motion } from "framer-motion";
 import Modal from "@/components/modals/modals";
 
 const slides = [
@@ -25,11 +27,10 @@ const Slideshow = () => {
 		setCurrentIndex((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
 	}, []);
 
-	// Auto-slide functionality
 	useEffect(() => {
 		const interval = setInterval(() => {
 			nextSlide();
-		}, 10000);
+		}, 8000);
 		return () => clearInterval(interval);
 	}, [currentIndex, nextSlide]);
 
@@ -45,32 +46,40 @@ const Slideshow = () => {
 	};
 
 	return (
-		<div className="relative w-full h-[550px] md:h-[800px] group overflow-hidden">
+		<div className="relative w-full h-[550px] md:h-[800px] group overflow-hidden flex items-center justify-center">
 			{/* Blurred Background */}
-			<div
+			<motion.div
+				key={currentIndex}
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 1 }}
 				style={{ backgroundImage: `url(${slides[currentIndex].url})` }}
-				className="absolute inset-0 bg-cover bg-center blur-lg scale-110 opacity-40 transition-all duration-500"
-			></div>
+				className="absolute inset-0 bg-cover bg-center blur-xl scale-110 opacity-30"
+			></motion.div>
 
-			{/* Main Image */}
-			<div
+			<motion.div
+				key={slides[currentIndex].url} // ✅ Unique key based on image URL
+				initial={{ opacity: 0, scale: 0.95 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{ duration: 0.8 }}
 				style={{ backgroundImage: `url(${slides[currentIndex].url})` }}
-				className="relative w-full h-full bg-center bg-contain bg-no-repeat duration-500 cursor-pointer z-10"
+				className="relative w-full h-full bg-center bg-contain bg-no-repeat cursor-pointer z-10"
 				onClick={() => openModal(slides[currentIndex].url)}
-			></div>
+			></motion.div>
 
 			{/* Navigation Arrows */}
+
 			<button
 				onClick={prevSlide}
-				className="absolute top-1/2 left-5 transform -translate-y-1/2 text-white bg-black/40 hover:bg-black/60 p-3 rounded-full transition z-20"
+				className="absolute top-1/2 left-5 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 backdrop-blur-md text-white p-2 md:p-3 rounded-full transition z-20 shadow-lg sm:text-sm sm:p-2"
 			>
-				<BsChevronCompactLeft size={30} />
+				<BsChevronCompactLeft className="w-5 h-5 md:w-6 md:h-6" />
 			</button>
 			<button
 				onClick={nextSlide}
-				className="absolute top-1/2 right-5 transform -translate-y-1/2 text-white bg-black/40 hover:bg-black/60 p-3 rounded-full transition z-20"
+				className="absolute top-1/2 right-5 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 backdrop-blur-md text-white p-2 md:p-3 rounded-full transition z-20 shadow-lg sm:text-sm sm:p-2"
 			>
-				<BsChevronCompactRight size={30} />
+				<BsChevronCompactRight className="w-5 h-5 md:w-6 md:h-6" />
 			</button>
 
 			{/* Navigation Dots */}
@@ -79,12 +88,12 @@ const Slideshow = () => {
 					<button
 						key={index}
 						onClick={() => goToSlide(index)}
-						className={`text-2xl transition transform hover:scale-125 ${
-							currentIndex === index ? "text-red-500 scale-125" : "text-white"
+						className={`w-3 h-3 rounded-full transition-all duration-300 ${
+							currentIndex === index
+								? "bg-red-500 scale-125"
+								: "bg-white/50 hover:bg-white"
 						}`}
-					>
-						<RxDotFilled />
-					</button>
+					></button>
 				))}
 			</div>
 

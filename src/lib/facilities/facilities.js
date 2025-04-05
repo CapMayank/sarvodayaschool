@@ -4,7 +4,7 @@ const facilities = [
 	{
 		id: "assembly-ground",
 		title: "Assembly Ground",
-		imageUrl: "/facilities/assembly.jpg",
+		imageUrl: "/facilities/assembly-ground/assembly.jpg",
 		description:
 			"A large assembly ground for events & gatherings and playground.",
 		highlights: [
@@ -25,7 +25,7 @@ const facilities = [
 		mediaGallery: [
 			{
 				type: "image",
-				src: "/facilities/independenceDay.jpg",
+				src: "/facilities/assembly-ground/IndependenceDay.jpg",
 				caption: "Independence Day Celebration",
 			},
 			{

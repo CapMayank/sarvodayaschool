@@ -33,6 +33,8 @@ const Hero = () => {
 				width={2000}
 				height={1333}
 			></Image>
+			{/* Dark Overlay */}
+			<div className="absolute inset-0 z-[-1] h-[1555px] md:h-[1555px] lg:h-full bg-black/20"></div>
 
 			<div className="w-[90%]  md:flex justify-center items-center sm:flex-col md:flex-row z-0">
 				<div className=" md:w-[60%] ">

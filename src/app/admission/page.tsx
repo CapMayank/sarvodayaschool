@@ -3,8 +3,15 @@
 import React, { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
+import {
+	FileCheck, // Replace DocumentCheck with FileCheck
+	ScrollText,
+	Upload,
+	Phone,
+} from "lucide-react";
 
 // District and block data
 const districts: { [key: string]: string[] } = {
@@ -62,16 +69,39 @@ const districts: { [key: string]: string[] } = {
 	],
 };
 
+const feeStructure = [
+	{ class: "Nursery", fee: 8690 },
+	{ class: "K.G.I", fee: 9910 },
+	{ class: "K.G.II", fee: 10580 },
+	{ class: "1st", fee: 11120 },
+	{ class: "2nd", fee: 11470 },
+	{ class: "3rd", fee: 11880 },
+	{ class: "4th", fee: 12170 },
+	{ class: "5th", fee: 12610 },
+	{ class: "6th", fee: 13620 },
+	{ class: "7th", fee: 13940 },
+	{ class: "8th", fee: 15710 },
+	{ class: "9th", fee: 19125 },
+	{ class: "10th", fee: 20655 },
+	{ class: "11th", fee: 21950 },
+	{ class: "12th", fee: 22160 },
+];
+
 const AdmissionForm: React.FC = () => {
 	const [formData, setFormData] = useState({
 		studentName: "",
 		gender: "",
 		fatherName: "",
+		motherName: "", // Added new field
 		mobileNumber: "",
+		alternateMobile: "", // Added new field
+		dateOfBirth: "", // Added new field
 		class: "",
 		district: "",
 		block: "",
 		address: "",
+		previousSchool: "", // Added new field
+		captchaToken: "", // Added for verification
 	});
 
 	const handleChange = (
@@ -90,253 +120,506 @@ const AdmissionForm: React.FC = () => {
 	};
 
 	const handleCaptchaChange = (value: string | null) => {
-		console.log("Captcha value:", value);
+		setFormData({ ...formData, captchaToken: value || "" });
 	};
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 
-		const {
-			studentName,
-			gender,
-			fatherName,
-			mobileNumber,
-			class: admissionClass,
-			district,
-			block,
-			address,
-		} = formData;
+		if (!formData.captchaToken) {
+			alert("Please complete the CAPTCHA verification");
+			return;
+		}
 
 		const message = `
-      Student Name: ${studentName}
-      Gender: ${gender}
-      Father's Name: ${fatherName}
-      Mobile Number: ${mobileNumber}
-      Class for Admission: ${admissionClass}
-      District: ${district}
-      Block: ${block}
-      Address: ${address}
-    `;
+Student Details:
+Name: ${formData.studentName}
+Gender: ${formData.gender}
+Date of Birth: ${formData.dateOfBirth}
+Previous School: ${formData.previousSchool}
+
+Parent Details:
+Father's Name: ${formData.fatherName}
+Mother's Name: ${formData.motherName}
+
+Contact Information:
+Mobile Number: ${formData.mobileNumber}
+Alternate Mobile: ${formData.alternateMobile}
+
+Academic Details:
+Class for Admission: ${formData.class}
+
+Address Details:
+District: ${formData.district}
+Block: ${formData.block}
+Complete Address: ${formData.address}
+  `;
 
 		const encodedMessage = encodeURIComponent(message);
 		const whatsappURL = `https://wa.me/918989646850?text=${encodedMessage}`;
 		window.open(whatsappURL, "_blank")?.focus();
 	};
 
+	const requiredDocuments = [
+		{
+			title: "Identity Proof",
+			icon: <FileCheck className="w-6 h-6" />,
+			items: [
+				"Aadhar Card (Photocopy)",
+				"Birth Certificate (Attested Photocopy)",
+				"Samagra ID (SSSM ID) (Photocopy)",
+				"Previous School TC (Original, if applicable)",
+				"Caste Certificate of the Child",
+			],
+		},
+		{
+			title: "Academic Records",
+			items: [
+				"Previous Year's Report Card (Photocopy)",
+				"Transfer Certificate (Original)",
+				"Character Certificate",
+			],
+		},
+		{
+			title: "Financial Documents",
+			items: [
+				"Bank Passbook (Photocopy)",
+				"BPL Card (Photocopy, if eligible)",
+				"Karmkar Card (Photocopy, if applicable)",
+			],
+		},
+		{
+			title: "Photographs",
+			items: [
+				"Three latest passport-size photographs of the student",
+				"One latest passport-size photograph of the mother",
+				"One latest passport-size photograph of the father",
+			],
+		},
+		{
+			title: "Address & Parent Verification",
+			items: ["Residence Proof", "Father's and Mother's Aadhaar Card"],
+		},
+	];
+
 	return (
 		<>
-			<Header title="Admission Form" />
+			<Header title="Admission" />
 
-			<div className="flex justify-center ">
-				<div className="flex gap-4 mt-5 md:w-[90%] justify-center flex-col sm:flex-row">
-					<div className="flex md:w-[50%] justify-center my-2">
-						<div className="w-[100%] p-6 border  bg-white bg-opacity-100 rounded-lg shadow-lg">
-							<form onSubmit={handleSubmit} className="space-y-6">
-								<div>
-									<label
-										htmlFor="studentName"
-										className="block font-bold mb-2 text-gray-700"
-									>
-										Student Name:
-									</label>
-									<input
-										type="text"
-										id="studentName"
-										name="studentName"
-										value={formData.studentName}
-										onChange={handleChange}
-										required
-										className="w-full p-2 border border-red-600 rounded"
-									/>
-								</div>
-								<div>
-									<label
-										htmlFor="gender"
-										className="block font-bold mb-2 text-gray-700"
-									>
-										Gender:
-									</label>
-									<select
-										id="gender"
-										name="gender"
-										value={formData.gender}
-										onChange={handleChange}
-										required
-										className="w-full p-2 border border-red-600 rounded"
-									>
-										<option value="">Select Gender</option>
-										<option value="Male">Male</option>
-										<option value="Female">Female</option>
-									</select>
-								</div>
-								<div>
-									<label
-										htmlFor="fatherName"
-										className="block font-bold mb-2 text-gray-700"
-									>
-										Father Name:
-									</label>
-									<input
-										type="text"
-										id="fatherName"
-										name="fatherName"
-										value={formData.fatherName}
-										onChange={handleChange}
-										required
-										className="w-full p-2 border border-red-600 rounded"
-									/>
-								</div>
-								<div>
-									<label
-										htmlFor="mobileNumber"
-										className="block font-bold mb-2 text-gray-700"
-									>
-										Mobile Number:
-									</label>
-									<input
-										type="tel"
-										id="mobileNumber"
-										name="mobileNumber"
-										value={formData.mobileNumber}
-										onChange={handleChange}
-										required
-										className="w-full p-2 border border-red-600 rounded"
-									/>
-								</div>
-								<div>
-									<label
-										htmlFor="class"
-										className="block font-bold mb-2 text-gray-700"
-									>
-										Class for Admission:
-									</label>
-									<select
-										id="class"
-										name="class"
-										value={formData.class}
-										onChange={handleChange}
-										required
-										className="w-full p-2 border border-red-600 rounded"
-									>
-										<option value="">Select Class</option>
-										<option value="Nursery">Nursery</option>
-										<option value="KGI">KGI</option>
-										<option value="KGII">KGII</option>
-										<option value="1st">1st</option>
-										<option value="2nd">2nd</option>
-										<option value="3rd">3rd</option>
-										<option value="4th">4th</option>
-										<option value="5th">5th</option>
-										<option value="6th">6th</option>
-										<option value="7th">7th</option>
-										<option value="8th">8th</option>
-										<option value="9th">9th</option>
-										<option value="10th">10th</option>
-										<option value="11th">11th</option>
-										<option value="12th">12th</option>
-									</select>
-								</div>
+			<div className="max-w-7xl mx-auto px-4 py-12">
+				{/* Required Documents Section */}
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.5, delay: 0.2 }}
+					className="mb-12 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-6"
+				>
+					<h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+						<FileCheck className="mr-3 text-red-600 w-8 h-8" />
+						Required Documents
+					</h2>
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+						{requiredDocuments.map((category, index) => (
+							<motion.div
+								key={index}
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: index * 0.1 }}
+								className="bg-white rounded-lg p-5 border border-gray-200 hover:border-red-200 transition-all duration-300 hover:shadow-md"
+							>
+								<h3 className="font-bold text-red-600 text-lg mb-4 flex items-center gap-2">
+									{category.title}
+								</h3>
+								<ul className="space-y-3">
+									{category.items.map((item, idx) => (
+										<motion.li
+											key={idx}
+											initial={{ opacity: 0, x: -10 }}
+											animate={{ opacity: 1, x: 0 }}
+											transition={{ delay: index * 0.1 + idx * 0.05 }}
+											className="flex items-start text-gray-700 group"
+										>
+											<span className="mr-2 text-red-500 font-bold">•</span>
+											<span className="group-hover:text-red-600 transition-colors">
+												{item}
+											</span>
+										</motion.li>
+									))}
+								</ul>
+							</motion.div>
+						))}
+					</div>
+				</motion.div>
 
-								{/* District Dropdown - New */}
-								<div>
-									<label
-										htmlFor="district"
-										className="block font-bold mb-2 text-gray-700"
-									>
-										District:
-									</label>
-									<select
-										id="district"
-										name="district"
-										value={formData.district}
-										onChange={handleChange}
-										required
-										className="w-full p-2 border border-red-600 rounded"
-									>
-										<option value="">Select District</option>
-										{Object.keys(districts).map((district) => (
-											<option key={district} value={district}>
-												{district}
-											</option>
-										))}
-									</select>
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+					{/* Admission Form */}
+					<motion.div
+						initial={{ opacity: 0, x: -20 }}
+						animate={{ opacity: 1, x: 0 }}
+						transition={{ duration: 0.5, delay: 0.4 }}
+						className="bg-white rounded-xl shadow-lg overflow-hidden"
+					>
+						<div className="bg-gradient-to-r from-gray-800 to-gray-700 p-6">
+							<h2 className="text-2xl font-bold text-white flex items-center">
+								<ScrollText className="mr-2" />
+								Enquire Admission
+							</h2>
+							<p className="text-white/80 mt-2">
+								Fill in all the required details
+							</p>
+						</div>
+
+						<div className="p-4">
+							<form onSubmit={handleSubmit} className="space-y-4">
+								{/* Student Information Section */}
+								<div className="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2">
+									<h3 className="text-lg font-bold text-gray-800 mb-2">
+										Student Information
+									</h3>
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+										<div>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Student Name *
+											</label>
+											<input
+												type="text"
+												name="studentName"
+												value={formData.studentName}
+												onChange={handleChange}
+												className="w-full p-2.5 text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+												required
+											/>
+										</div>
+
+										<div>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Date of Birth *
+											</label>
+											<input
+												type="date"
+												name="dateOfBirth"
+												value={formData.dateOfBirth}
+												onChange={handleChange}
+												className="w-full p-2.5 text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+												required
+											/>
+										</div>
+
+										<div>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Gender *
+											</label>
+											<select
+												name="gender"
+												value={formData.gender}
+												onChange={handleChange}
+												className="w-full p-2.5 text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+												required
+											>
+												<option value="">Select Gender</option>
+												<option value="Male">Male</option>
+												<option value="Female">Female</option>
+											</select>
+										</div>
+
+										<div>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Previous School (if any)
+											</label>
+											<input
+												type="text"
+												name="previousSchool"
+												value={formData.previousSchool}
+												onChange={handleChange}
+												className="w-full p-2.5 text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+											/>
+										</div>
+									</div>
 								</div>
 
-								{/* Block Dropdown - New */}
-								<div>
-									<label
-										htmlFor="block"
-										className="block font-bold mb-2 text-gray-700"
-									>
-										Block:
-									</label>
-									<select
-										id="block"
-										name="block"
-										value={formData.block}
-										onChange={handleChange}
-										required
-										className="w-full p-2 border border-red-600 rounded"
-										disabled={!formData.district} // Disable if no district is selected
-									>
-										<option value="">Select Block</option>
-										{formData.district &&
-											districts[formData.district]?.map((block: string) => (
-												<option key={block} value={block}>
-													{block}
+								{/* Parent Information */}
+								<div className="bg-gray-50 p-6 rounded-lg border border-gray-200 space-y-4">
+									<h3 className="text-lg font-bold text-gray-800 mb-2">
+										Parent Information
+									</h3>
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+										<div>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Father&apos;s Name *
+											</label>
+											<input
+												type="text"
+												name="fatherName"
+												value={formData.fatherName}
+												onChange={handleChange}
+												className="w-full p-2.5 text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+												required
+											/>
+										</div>
+
+										<div>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Mother&apos;s Name *
+											</label>
+											<input
+												type="text"
+												name="motherName"
+												value={formData.motherName}
+												onChange={handleChange}
+												className="w-full p-2.5 text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+												required
+											/>
+										</div>
+									</div>
+								</div>
+
+								{/* Contact Information */}
+								<div className="bg-gray-50 p-6 rounded-lg border border-gray-200 space-y-4">
+									<h3 className="text-lg font-bold text-gray-800 mb-2">
+										Contact Information
+									</h3>
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+										<div>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Primary Mobile Number *
+											</label>
+											<input
+												type="tel"
+												name="mobileNumber"
+												value={formData.mobileNumber}
+												onChange={handleChange}
+												className="w-full p-2.5 text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+												required
+											/>
+										</div>
+
+										<div>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Alternate Mobile Number
+											</label>
+											<input
+												type="tel"
+												name="alternateMobile"
+												value={formData.alternateMobile}
+												onChange={handleChange}
+												className="w-full p-2.5 text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+											/>
+										</div>
+									</div>
+								</div>
+
+								{/* Academic Information */}
+								<div className="bg-gray-50 p-6 rounded-lg border border-gray-200 space-y-4">
+									<h3 className="text-lg font-bold text-gray-800 mb-2">
+										Academic Information
+									</h3>
+									<div>
+										<label className="block text-sm font-medium text-gray-700 mb-1">
+											Class for Admission *
+										</label>
+										<select
+											name="class"
+											value={formData.class}
+											onChange={handleChange}
+											className="w-full p-2.5 text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+											required
+										>
+											<option value="">Select Class</option>
+											<option value="Nursery">Nursery</option>
+											<option value="KGI">KG I</option>
+											<option value="KGII">KG II</option>
+											{Array.from({ length: 12 }, (_, i) => (
+												<option key={i + 1} value={`${i + 1}`}>
+													{i + 1}th
 												</option>
 											))}
-									</select>
+										</select>
+									</div>
 								</div>
 
-								<div>
-									<label
-										htmlFor="address"
-										className="block font-bold mb-2 text-gray-700"
-									>
-										Address:
-									</label>
-									<textarea
-										id="address"
-										name="address"
-										value={formData.address}
-										onChange={handleChange}
-										required
-										className="w-full p-2 border border-red-600 rounded"
-									/>
+								{/* Address Information */}
+								<div className="bg-gray-50 p-6 rounded-lg border border-gray-200 space-y-4">
+									<h3 className="text-lg font-bold text-gray-800 mb-2">
+										Address Information
+									</h3>
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+										<div>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												District *
+											</label>
+											<select
+												name="district"
+												value={formData.district}
+												onChange={handleChange}
+												className="w-full p-2.5 text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+												required
+											>
+												<option value="">Select District</option>
+												{Object.keys(districts).map((district) => (
+													<option key={district} value={district}>
+														{district}
+													</option>
+												))}
+											</select>
+										</div>
+
+										<div>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Block *
+											</label>
+											<select
+												name="block"
+												value={formData.block}
+												onChange={handleChange}
+												className="w-full p-2.5 text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+												required
+												disabled={!formData.district}
+											>
+												<option value="">Select Block</option>
+												{formData.district &&
+													districts[formData.district]?.map((block) => (
+														<option key={block} value={block}>
+															{block}
+														</option>
+													))}
+											</select>
+										</div>
+
+										<div className="md:col-span-2">
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Complete Address *
+											</label>
+											<textarea
+												name="address"
+												value={formData.address}
+												onChange={handleChange}
+												rows={3}
+												className="w-full p-2.5 text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+												required
+											/>
+										</div>
+									</div>
 								</div>
-								<div>
-									<ReCAPTCHA
-										sitekey="6LcftbUpAAAAAM_u0aqDmAHve_F4cYE4f3ePsX-5"
-										onChange={handleCaptchaChange}
-									/>
+
+								{/* Verification */}
+								<div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+									<div className="flex justify-center">
+										<ReCAPTCHA
+											sitekey="6LcftbUpAAAAAM_u0aqDmAHve_F4cYE4f3ePsX-5"
+											onChange={handleCaptchaChange}
+										/>
+									</div>
 								</div>
+
 								<button
 									type="submit"
-									className="w-full p-3 bg-red-600 text-white rounded-lg hover:bg-red-700"
+									disabled={!formData.captchaToken}
+									className={`w-full p-3 rounded-lg flex items-center justify-center space-x-2 ${
+										formData.captchaToken
+											? "bg-red-600 hover:bg-red-700 text-white"
+											: "bg-gray-300 cursor-not-allowed text-gray-500"
+									}`}
 								>
-									Submit
+									<span>Submit Application</span>
 								</button>
 							</form>
 						</div>
-					</div>
-					<div className="flex md:w-[50%] justify-center p-2 my-2 border bg-white bg-opacity-90 rounded-lg shadow-lg">
-						<div className="text-center">
-							<Image
-								src="/fee_structure26.png"
-								alt="Fee Structure"
-								width={1000}
-								height={1000}
-							/>
-							<a href="/fee_structure26.png" download="fee_structure.png">
-								<button className="m-2 p-3 bg-red-600 text-white rounded-lg hover:bg-red-700">
-									Download Fee Structure
-								</button>
-							</a>
+					</motion.div>
+
+					{/* Fee Structure Card */}
+					<motion.div
+						initial={{ opacity: 0, x: 20 }}
+						animate={{ opacity: 1, x: 0 }}
+						transition={{ duration: 0.5, delay: 0.4 }}
+						className="bg-white rounded-xl shadow-lg overflow-hidden"
+					>
+						<div className="bg-gradient-to-r from-gray-800 to-gray-700 p-6">
+							<h2 className="text-2xl font-bold text-white flex items-center">
+								<Upload className="mr-2" />
+								Fee Structure
+							</h2>
+							<p className="text-white/80 mt-2">Academic Session 2025-26</p>
 						</div>
-					</div>
+
+						<div className="p-6">
+							<div className="overflow-hidden rounded-lg border border-gray-200">
+								<table className="min-w-full divide-y divide-gray-200">
+									<thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+										<tr>
+											<th className="px-6 py-4 text-left text-base font-bold text-gray-900">
+												S.N.
+											</th>
+											<th className="px-6 py-4 text-left text-base font-bold text-gray-900">
+												Class
+											</th>
+											<th className="px-6 py-4 text-left text-base font-bold text-gray-900">
+												Total Fee (₹)
+											</th>
+										</tr>
+									</thead>
+									<tbody className="divide-y divide-gray-200 bg-white">
+										{feeStructure.map((item, index) => (
+											<motion.tr
+												key={index}
+												initial={{ opacity: 0, y: 10 }}
+												animate={{ opacity: 1, y: 0 }}
+												transition={{ delay: index * 0.05 }}
+												className="hover:bg-gray-50 transition-colors"
+											>
+												<td className="px-6 py-4 text-base text-gray-700">
+													{index + 1}
+												</td>
+												<td className="px-6 py-4 text-base font-medium text-gray-900">
+													{item.class}
+												</td>
+												<td className="px-6 py-4 text-base text-gray-900">
+													<span className="font-bold text-red-600">
+														₹{item.fee.toLocaleString("en-IN")}
+													</span>
+												</td>
+											</motion.tr>
+										))}
+									</tbody>
+									<tfoot className="bg-gradient-to-r from-gray-50 to-gray-100">
+										<tr>
+											<td
+												colSpan={3}
+												className="px-6 py-4 text-base text-gray-600 text-center italic"
+											>
+												* Fee structure is subject to change as per school
+												management decision
+											</td>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+						</div>
+					</motion.div>
 				</div>
+
+				{/* Contact Section */}
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.5, delay: 0.6 }}
+					className="mt-12 bg-white rounded-xl shadow-lg p-6 text-center"
+				>
+					<h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center justify-center">
+						<Phone className="mr-2 text-red-600" />
+						Need Help?
+					</h2>
+					<p className="text-gray-600">
+						For any queries regarding admission, please contact us at:
+						<a
+							href="tel:+918989646850"
+							className="text-red-600 font-semibold ml-2 hover:text-red-700"
+						>
+							+91 89896 46850
+						</a>
+					</p>
+				</motion.div>
 			</div>
+
 			<Footer />
 		</>
 	);

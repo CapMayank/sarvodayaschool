@@ -4,7 +4,7 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Award } from "lucide-react";
 import achievements from "@/lib/achievement/achievements";
 import Modal from "@/components/modals/modals";
 
@@ -31,16 +31,24 @@ export default function AchievementsSection() {
 	};
 
 	return (
-		<div className="relative w-full bg-gray-100 py-10">
-			{/* Section Title */}
-			<motion.h2
-				className="text-5xl font-bold text-center heading-text-red mb-12 drop-shadow-lg"
-				initial={{ opacity: 0, y: -30 }}
+		<div className="relative w-full bg-gradient-to-b from-gray-50 to-white py-16 ">
+			{/* Header */}
+			<motion.div
+				className="text-center mb-12"
+				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.6 }}
 			>
-				Our Achievements
-			</motion.h2>
+				<div className="inline-flex items-center gap-2 mb-4">
+					<Award className="text-red-600 w-8 h-8" />
+					<h2 className="text-4xl font-bold text-gray-900">
+						Our <span className="text-red-600">Achievements</span>
+					</h2>
+				</div>
+				<p className="text-gray-600 max-w-2xl mx-auto">
+					Celebrating excellence and recognition in academics, sports, and
+					co-curricular activities
+				</p>
+			</motion.div>
 
 			{/* Carousel Container - Make it relative for positioning */}
 			<div className="relative">

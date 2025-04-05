@@ -64,7 +64,7 @@ const Navbar = () => {
 				</div>
 			</div>
 			<div
-				className={`flex flex-col text-xl heading-text-yellow  font-bold items-center backdrop-blur-sm bg-red-500/10 md:hidden ${
+				className={`flex flex-col text-xl heading-text-yellow  font-bold items-center  bg-white/10 backdrop-blur-md shadow-lg rounded-lg border border-white/20 md:hidden ${
 					isOpen ? "" : "hidden"
 				}`}
 			>
@@ -83,13 +83,16 @@ const Navbar = () => {
 				<a href="/gallery" className="text-white my-2">
 					Gallery
 				</a>
+				<a href="/contact" className="text-white my-2">
+					Contact Us
+				</a>
 				<a href="/about" className="text-white my-2">
 					About
 				</a>
 			</div>
 			<div className="flex justify-center">
-				<div className="flex w-[90%] justify-between backdrop-blur-sm bg-red-500/10 ">
-					<div className="p-6 text-xl heading-text-yellow  font-bold justify-center gap-10 hidden md:flex">
+				<div className="flex w-[90%] justify-between  bg-white/10 backdrop-blur-md shadow-lg rounded-lg border border-white/20 ">
+					<div className="p-6 text-xl heading-text-yellow  font-bold justify-center gap-5 hidden md:flex">
 						<a href="/" className="ml-4 text-white hover:text-yellow-300">
 							Home
 						</a>
@@ -114,6 +117,12 @@ const Navbar = () => {
 						>
 							Gallery
 						</a>
+						<a
+							href="/contact"
+							className="ml-4 text-white hover:text-yellow-300"
+						>
+							Contact Us
+						</a>
 						<a href="/about" className="ml-4 text-white hover:text-yellow-300">
 							About
 						</a>
@@ -129,7 +138,7 @@ const Navbar = () => {
 			<Link href="/careers">
 				<div className="flex justify-center md:my-1">
 					{" "}
-					<div className=" marquee p-2 text-red-600 text-2xl font-sans font-black flex md:w-[90%] justify-between backdrop-blur-sm  bg-white/30">
+					<div className=" marquee p-2 text-red-600 text-2xl font-sans flex md:w-[90%] justify-between  bg-white/10 backdrop-blur-md shadow-lg rounded-lg border border-white/20">
 						<div className="marquee-content">
 							Teacher Requirement 2025-26 Subject-
 							Maths/Bio/Physics/Chemistry/Sanskrit/Social-Science/Commerce/Hindi/English
