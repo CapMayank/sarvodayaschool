@@ -38,12 +38,23 @@ const Gallery = () => {
 			imageUrl: "/gallery/Sports/image8.jpg",
 			description: "Sports events and athletic achievements",
 		},
+		{
+			id: 5,
+			class: "Class_Activities",
+			placeholder: "Class Activities",
+			imageUrl: "/gallery/ClassActivities/image35.png",
+			description: "Engaging class activities and projects",
+		},
 	];
 
 	const youtubePlaylists = [
 		{
+			id: "PLLNvFiU5ntQdpRUCKAHbeLT9c2R-c8vl0",
+			title: "Functions and Events 2025-26",
+		},
+		{
 			id: "PLLNvFiU5ntQcPwDj4MTRvEutCH3LKvskQ",
-			title: "Annual Function 2025",
+			title: "Annual Function 2024-25",
 		},
 		{
 			id: "PLLNvFiU5ntQd5nwiHP3Y8F5WKM4ywa11-",

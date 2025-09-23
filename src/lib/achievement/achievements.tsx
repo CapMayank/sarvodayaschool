@@ -2,6 +2,18 @@
 
 const achievements = [
 	{
+		title: "MP Topper 2025",
+		imageUrl: "/slideshow/MeenakshiTopper2025.jpg",
+		description:
+			"Meenakshi Vishwakarma Scored 98.2% in 10th Board Exams Securing 10th Rank in MP.",
+	},
+	{
+		title: "District Topper 2025",
+		imageUrl: "/slideshow/SanjanaRajakTopper2025.jpg",
+		description:
+			"Sanjana Rajak Scored 98% in 10th Board Exams Securing 1st Rank in Seoni District.",
+	},
+	{
 		title: "PhD Awarded To Director Sir",
 		imageUrl: "/achievements/phd.jpg",
 		description: "Our School Director, Dr. Mangal Vishwakarma was awarded PhD.",

@@ -8,6 +8,11 @@ import { motion } from "framer-motion";
 import Modal from "@/components/modals/modals";
 
 const slides = [
+	{ url: "/slideshow/MeenakshiTopper2025.jpg" },
+	{ url: "/slideshow/SanjanaRajakTopper2025.jpg" },
+	{ url: "/slideshow/Result2025.jpg" },
+	{ url: "/slideshow/10TH2025new.jpg" },
+	{ url: "/slideshow/12th2025.jpg" },
 	{ url: "/slideshow/8th2025.png" },
 	{ url: "/slideshow/5th2025.png" },
 	{ url: "/slideshow/result2024.png" },

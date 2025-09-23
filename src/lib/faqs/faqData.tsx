@@ -3,9 +3,9 @@
 // Add this FAQ data at the top of your component, after the imports
 const faqData = [
 	{
-		question: "How can I apply for admission?",
+		question: "What is the admission process?",
 		answer:
-			"Visit our campus during office hours to collect and submit an application form. You can also download the preliminary application form from our website.",
+			"Visit our campus during office hours to collect and submit an application form.",
 	},
 	{
 		question: "What are the school timings?",
