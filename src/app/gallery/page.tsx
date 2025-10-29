@@ -1,51 +1,61 @@
 /** @format */
+
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
-import Image from "next/image";
+import { CldImage } from "next-cloudinary";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Camera, Video, ChevronRight } from "lucide-react";
+import { CategoryGridSkeleton } from "@/components/LoadingSkeleton";
+
+// Define categories statically - loads instantly
+const staticCategories = [
+	{
+		name: "Cultural_Programme",
+		title: "Cultural Programme",
+		description: "Annual cultural celebrations and performances",
+	},
+	{
+		name: "Stall",
+		title: "Stall",
+		description: "Exhibition stalls and presentations",
+	},
+	{
+		name: "Science_Exhibition",
+		title: "Science Exhibition",
+		description: "Student science projects and innovations",
+	},
+	{
+		name: "Sports",
+		title: "Sports",
+		description: "Sports events and athletic achievements",
+	},
+	{
+		name: "Class_Activities",
+		title: "Class Activities",
+		description: "Engaging class activities and projects",
+	},
+];
 
 const Gallery = () => {
-	const placeholderImages = [
-		{
-			id: 1,
-			class: "Cultural_Programme",
-			placeholder: "Cultural Programme",
-			imageUrl: "/gallery/CulturalProgram/image8.jpg",
-			description: "Annual cultural celebrations and performances",
-		},
-		{
-			id: 2,
-			class: "Stall",
-			placeholder: "Stall",
-			imageUrl: "/gallery/Stall/image1.jpg",
-			description: "Exhibition stalls and presentations",
-		},
-		{
-			id: 3,
-			class: "Science_Exhibition",
-			placeholder: "Science Exhibition",
-			imageUrl: "/gallery/ScienceExhibition/image1.jpg",
-			description: "Student science projects and innovations",
-		},
-		{
-			id: 4,
-			class: "Sports",
-			placeholder: "Sports",
-			imageUrl: "/gallery/Sports/image8.jpg",
-			description: "Sports events and athletic achievements",
-		},
-		{
-			id: 5,
-			class: "Class_Activities",
-			placeholder: "Class Activities",
-			imageUrl: "/gallery/ClassActivities/image35.png",
-			description: "Engaging class activities and projects",
-		},
-	];
+	const [thumbnails, setThumbnails] = useState<Record<string, string>>({});
+	const [loadingThumbnails, setLoadingThumbnails] = useState(true);
+
+	// Fetch thumbnails in background after page loads
+	useEffect(() => {
+		fetch("/api/gallery/thumbnails")
+			.then((res) => res.json())
+			.then((data) => {
+				setThumbnails(data.thumbnails || {});
+				setLoadingThumbnails(false);
+			})
+			.catch((error) => {
+				console.error("Error fetching thumbnails:", error);
+				setLoadingThumbnails(false);
+			});
+	}, []);
 
 	const youtubePlaylists = [
 		{
@@ -96,7 +106,6 @@ const Gallery = () => {
 			<Header title="Gallery" />
 
 			<div className="max-w-7xl mx-auto px-4 py-12 bg-gray-100 md:bg-transparent mt-5">
-				{/* Hero Section */}
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -111,7 +120,6 @@ const Gallery = () => {
 					</p>
 				</motion.div>
 
-				{/* Image Gallery Section */}
 				<section className="mb-20">
 					<div className="flex items-center mb-8">
 						<Camera className="w-6 h-6 text-red-600 mr-2" />
@@ -120,46 +128,56 @@ const Gallery = () => {
 						</h2>
 					</div>
 
-					<motion.div
-						variants={containerVariants}
-						initial="hidden"
-						animate="visible"
-						className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-					>
-						{placeholderImages.map((image) => (
-							<motion.div
-								key={image.id}
-								variants={itemVariants}
-								className="group relative overflow-hidden rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300"
-							>
-								<Link href={"/gallery/" + image.class}>
-									<div className="relative h-64 overflow-hidden">
-										<Image
-											src={image.imageUrl}
-											alt={image.class}
-											fill
-											className="object-cover group-hover:scale-110 transition-transform duration-500"
-										/>
-										<div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-										<div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-											<h3 className="text-lg font-semibold mb-1">
-												{image.placeholder}
-											</h3>
-											<p className="text-sm text-white/80">
-												{image.description}
-											</p>
+					{loadingThumbnails ? (
+						<CategoryGridSkeleton />
+					) : (
+						<motion.div
+							variants={containerVariants}
+							initial="hidden"
+							animate="visible"
+							className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+						>
+							{staticCategories.map((category) => (
+								<motion.div
+									key={category.name}
+									variants={itemVariants}
+									className="group relative overflow-hidden rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300"
+								>
+									<Link href={`/gallery/${category.name}`}>
+										<div className="relative h-64 overflow-hidden">
+											{thumbnails[category.name] ? (
+												<CldImage
+													src={thumbnails[category.name]}
+													alt={category.title}
+													fill
+													sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+													className="object-cover group-hover:scale-110 transition-transform duration-500"
+												/>
+											) : (
+												<div className="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
+													<Camera className="w-16 h-16 text-red-600 opacity-50" />
+												</div>
+											)}
+											<div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+											<div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+												<h3 className="text-lg font-semibold mb-1">
+													{category.title}
+												</h3>
+												<p className="text-sm text-white/80">
+													{category.description}
+												</p>
+											</div>
+											<div className="absolute top-4 right-4 bg-red-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+												<ChevronRight className="w-4 h-4" />
+											</div>
 										</div>
-										<div className="absolute top-4 right-4 bg-red-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-											<ChevronRight className="w-4 h-4" />
-										</div>
-									</div>
-								</Link>
-							</motion.div>
-						))}
-					</motion.div>
+									</Link>
+								</motion.div>
+							))}
+						</motion.div>
+					)}
 				</section>
 
-				{/* Video Playlists Section */}
 				<section>
 					<div className="flex items-center mb-8">
 						<Video className="w-6 h-6 text-red-600 mr-2" />

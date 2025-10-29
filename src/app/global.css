@@ -149,3 +149,28 @@ body {
 		display: none;
 	}
 }
+
+@keyframes shimmer {
+	0% {
+		background-position: -200% 0;
+	}
+	100% {
+		background-position: 200% 0;
+	}
+}
+
+.animate-shimmer {
+	animation: shimmer 2s infinite;
+}
+
+/* Smooth lightbox transitions */
+@layer utilities {
+	.backdrop-blur-sm {
+		backdrop-filter: blur(8px);
+	}
+}
+
+/* Custom scrollbar for when lightbox is open */
+body {
+	scrollbar-gutter: stable;
+}
