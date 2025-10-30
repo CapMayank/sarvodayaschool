@@ -4,6 +4,7 @@
 
 import { CldUploadWidget } from "next-cloudinary";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface CloudinaryUploadProps {
 	onUploadSuccess: (url: string) => void;
@@ -101,6 +102,7 @@ export default function CloudinaryUpload({
 						alt="Preview"
 						className="w-full max-w-sm h-48 object-cover rounded-lg border-2 border-gray-200"
 					/>
+
 					<button
 						type="button"
 						onClick={() => {

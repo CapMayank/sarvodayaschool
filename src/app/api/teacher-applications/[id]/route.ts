@@ -5,18 +5,19 @@ import { prisma } from "@/lib/prisma";
 
 export async function DELETE(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
-		const id = parseInt(params.id);
+		const { id } = await params;
+		const parsedId = parseInt(id);
 
-		if (isNaN(id)) {
+		if (isNaN(parsedId)) {
 			return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
 		}
 
 		// Delete the teacher application
 		await prisma.teacherApplication.delete({
-			where: { id },
+			where: { id: parsedId },
 		});
 
 		return NextResponse.json(
@@ -34,18 +35,19 @@ export async function DELETE(
 
 export async function PATCH(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
-		const id = parseInt(params.id);
+		const { id } = await params;
+		const parsedId = parseInt(id);
 		const body = await request.json();
 
-		if (isNaN(id)) {
+		if (isNaN(parsedId)) {
 			return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
 		}
 
 		const application = await prisma.teacherApplication.update({
-			where: { id },
+			where: { id: parsedId },
 			data: {
 				status: body.status,
 				notes: body.notes,

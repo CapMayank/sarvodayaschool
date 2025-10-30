@@ -285,7 +285,7 @@ const Careers: React.FC = () => {
 												Qualifications
 											</h3>
 											<p className="text-gray-600 text-sm">
-												Bachelor's Degree with B.Ed or equivalent
+												Bachelor&apos;s Degree with B.Ed or equivalent
 											</p>
 										</div>
 									</div>
@@ -694,11 +694,14 @@ const Careers: React.FC = () => {
 				</div>
 			</div>
 
-			<Modal
-				showModal={showModal}
-				setShowModal={setShowModal}
-				imageUrl={selectedImage}
-			/>
+			{showModal && selectedImage && (
+				<Modal
+					showModal={showModal}
+					setShowModal={setShowModal}
+					imageUrl={selectedImage}
+				/>
+			)}
+
 			<Footer />
 		</>
 	);

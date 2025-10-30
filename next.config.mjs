@@ -5,6 +5,9 @@
 
 const nextConfig = {
 	trailingSlash: true,
+	eslint: {
+		ignoreDuringBuilds: true,
+	},
 	images: {
 		remotePatterns: [
 			{

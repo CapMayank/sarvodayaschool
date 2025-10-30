@@ -2,7 +2,13 @@
 
 "use client";
 
-type Tab = "achievements" | "slideshows" | "news" | "admissions" | "teachers";
+type Tab =
+	| "achievements"
+	| "slideshows"
+	| "news"
+	| "admissions"
+	| "teachers"
+	| "users";
 
 interface AdminTabsProps {
 	activeTab: Tab;

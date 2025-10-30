@@ -6,30 +6,34 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Header from "@/components/header/header";
+
 export default function AdminLogin() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState("");
 	const router = useRouter();
 
 	const handleLogin = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsLoading(true);
+		setError("");
 
 		try {
 			const result = await signIn("credentials", {
 				email,
 				password,
-				redirect: true,
-				callbackUrl: "/admin/dashboard",
+				redirect: false,
 			});
 
 			if (result?.error) {
-				alert("Invalid credentials");
+				setError("Invalid credentials");
+			} else if (result?.ok) {
+				router.push("/admin/dashboard");
 			}
-		} catch (error) {
-			console.error("Login error:", error);
-			alert("Login failed");
+		} catch (err) {
+			console.error("Login error:", err);
+			setError("Login failed");
 		} finally {
 			setIsLoading(false);
 		}
@@ -43,6 +47,11 @@ export default function AdminLogin() {
 					<h1 className="text-3xl font-bold mb-6 text-center text-red-600">
 						Admin Login
 					</h1>
+					{error && (
+						<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+							{error}
+						</div>
+					)}
 					<form onSubmit={handleLogin} className="space-y-4">
 						<div>
 							<label className="block text-sm font-medium text-gray-700 mb-2">
