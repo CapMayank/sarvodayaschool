@@ -7,6 +7,10 @@ import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
 	secret: process.env.AUTH_SECRET,
+	session: {
+		strategy: "jwt",
+		maxAge: 24 * 60 * 60,
+	},
 	providers: [
 		Credentials({
 			credentials: {
@@ -15,31 +19,35 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			},
 			authorize: async (credentials) => {
 				if (!credentials?.email || !credentials?.password) {
-					return null;
+					throw new Error("Email and password are required");
 				}
 
-				const admin = await prisma.admin.findUnique({
-					where: { email: credentials.email as string },
-				});
+				try {
+					const admin = await prisma.admin.findUnique({
+						where: { email: (credentials.email as string).toLowerCase() },
+					});
 
-				if (!admin) {
-					return null;
+					if (!admin) {
+						throw new Error("CredentialsSignin");
+					}
+
+					const isPasswordValid = await bcrypt.compare(
+						credentials.password as string,
+						admin.password
+					);
+
+					if (!isPasswordValid) {
+						throw new Error("CredentialsSignin");
+					}
+
+					return {
+						id: admin.id.toString(),
+						email: admin.email,
+						name: admin.name,
+					};
+				} catch (error) {
+					throw new Error("CredentialsSignin");
 				}
-
-				const isPasswordValid = await bcrypt.compare(
-					credentials.password as string,
-					admin.password
-				);
-
-				if (!isPasswordValid) {
-					return null;
-				}
-
-				return {
-					id: admin.id.toString(),
-					email: admin.email,
-					name: admin.name,
-				};
 			},
 		}),
 	],
@@ -62,17 +70,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				session.user.name = token.name as string;
 			}
 			return session;
-		},
-		authorized({ auth, request: { nextUrl } }) {
-			const isLoggedIn = !!auth?.user;
-			const isOnDashboard = nextUrl.pathname.startsWith("/admin/dashboard");
-
-			if (isOnDashboard) {
-				if (isLoggedIn) return true;
-				return false;
-			}
-
-			return true;
 		},
 	},
 });

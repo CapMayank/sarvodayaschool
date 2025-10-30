@@ -6,15 +6,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-	AlertCircle,
-	Loader,
-	LogOut,
-	Bell,
-	Settings,
-	Menu,
-	X,
-} from "lucide-react";
+import { AlertCircle, Loader, Bell, Settings } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminTabs, { Tab } from "@/components/admin/AdminTabs";
 import AchievementsTab from "@/components/admin/AchievementsTab";
@@ -25,7 +17,6 @@ import TeachersTab from "@/components/admin/TeachersTab";
 import UsersTab from "@/components/admin/UsersTab";
 import Header from "@/components/header/header";
 
-// Loading Skeleton Component
 const TabLoadingSkeleton = () => (
 	<motion.div
 		initial={{ opacity: 0 }}
@@ -38,7 +29,6 @@ const TabLoadingSkeleton = () => (
 	</motion.div>
 );
 
-// Error Boundary Component
 const ErrorFallback = ({
 	error,
 	resetError,
@@ -67,7 +57,6 @@ const ErrorFallback = ({
 	</motion.div>
 );
 
-// Tab Content Wrapper
 const TabContent = ({
 	activeTab,
 	onError,
@@ -112,16 +101,14 @@ export default function AdminDashboard() {
 	const router = useRouter();
 	const { status, data: session } = useSession();
 	const [activeTab, setActiveTab] = useState<Tab>("achievements");
-	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [tabError, setTabError] = useState<string | null>(null);
 	const [isClient, setIsClient] = useState(false);
 
-	// Ensure component only renders on client
 	useEffect(() => {
 		setIsClient(true);
 	}, []);
 
-	// Redirect to login if unauthenticated
+	// FIXED: Only redirect if status is "unauthenticated", not "loading"
 	useEffect(() => {
 		if (status === "unauthenticated") {
 			router.push("/admin");
@@ -132,7 +119,6 @@ export default function AdminDashboard() {
 		return null;
 	}
 
-	// Loading state
 	if (status === "loading") {
 		return (
 			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
@@ -153,14 +139,20 @@ export default function AdminDashboard() {
 		);
 	}
 
+	if (status === "authenticated" && !session?.user) {
+		return (
+			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+				<p className="text-gray-300">Session error. Redirecting...</p>
+			</div>
+		);
+	}
+
 	return (
 		<>
 			<Header title="Admin Dashboard" />
 			<div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-				{/* Header */}
 				<AdminHeader />
 
-				{/* Main Content */}
 				<motion.div
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
@@ -168,7 +160,6 @@ export default function AdminDashboard() {
 					className="min-h-[calc(100vh-80px)]"
 				>
 					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-						{/* Page Title */}
 						<motion.div
 							initial={{ opacity: 0, y: -20 }}
 							animate={{ opacity: 1, y: 0 }}
@@ -186,7 +177,6 @@ export default function AdminDashboard() {
 							</p>
 						</motion.div>
 
-						{/* Tab Error Alert */}
 						{tabError && (
 							<motion.div
 								initial={{ opacity: 0, y: -10 }}
@@ -200,7 +190,6 @@ export default function AdminDashboard() {
 							</motion.div>
 						)}
 
-						{/* Tabs Navigation */}
 						<motion.div
 							initial={{ opacity: 0, y: 10 }}
 							animate={{ opacity: 1, y: 0 }}
@@ -216,7 +205,6 @@ export default function AdminDashboard() {
 							/>
 						</motion.div>
 
-						{/* Tab Content */}
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
@@ -229,14 +217,12 @@ export default function AdminDashboard() {
 							/>
 						</motion.div>
 
-						{/* Bottom Info Section */}
 						<motion.div
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 0.5 }}
 							className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6"
 						>
-							{/* Quick Stats */}
 							<div className="bg-white rounded-lg shadow p-6 border-l-4 border-red-600">
 								<div className="flex items-center justify-between">
 									<div>
@@ -251,7 +237,6 @@ export default function AdminDashboard() {
 								</div>
 							</div>
 
-							{/* User Info */}
 							<div className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-600">
 								<div className="flex items-center justify-between">
 									<div>

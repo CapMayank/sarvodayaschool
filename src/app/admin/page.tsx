@@ -19,20 +19,42 @@ export default function AdminLogin() {
 		setIsLoading(true);
 		setError("");
 
+		if (!email || !password) {
+			setError("Email and password are required");
+			setIsLoading(false);
+			return;
+		}
+
+		if (!email.includes("@")) {
+			setError("Please enter a valid email address");
+			setIsLoading(false);
+			return;
+		}
+
 		try {
 			const result = await signIn("credentials", {
-				email,
+				email: email.toLowerCase().trim(),
 				password,
-				redirect: true,
-				callbackUrl: "/admin/dashboard",
+				redirect: false,
 			});
 
-			if (result?.error) {
-				setError("Invalid credentials");
+			if (!result) {
+				setError("An unexpected error occurred. Please try again.");
+				return;
+			}
+
+			if (result.error) {
+				setError("Invalid email or password");
+				return;
+			}
+
+			if (result.ok) {
+				router.push("/admin/dashboard");
+				router.refresh();
 			}
 		} catch (err) {
 			console.error("Login error:", err);
-			setError("Login failed");
+			setError("Login failed. Please try again later.");
 		} finally {
 			setIsLoading(false);
 		}
@@ -46,11 +68,13 @@ export default function AdminLogin() {
 					<h1 className="text-3xl font-bold mb-6 text-center text-red-600">
 						Admin Login
 					</h1>
+
 					{error && (
 						<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
 							{error}
 						</div>
 					)}
+
 					<form onSubmit={handleLogin} className="space-y-4">
 						<div>
 							<label className="block text-sm font-medium text-gray-700 mb-2">
@@ -60,11 +84,14 @@ export default function AdminLogin() {
 								type="email"
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
-								className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-								placeholder="admin@sarvodaya.com"
+								className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition"
+								placeholder="admin@example.com"
 								required
+								disabled={isLoading}
+								autoComplete="email"
 							/>
 						</div>
+
 						<div>
 							<label className="block text-sm font-medium text-gray-700 mb-2">
 								Password
@@ -73,15 +100,18 @@ export default function AdminLogin() {
 								type="password"
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
-								className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-								placeholder="Enter password"
+								className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition"
+								placeholder="Enter your password"
 								required
+								disabled={isLoading}
+								autoComplete="current-password"
 							/>
 						</div>
+
 						<button
 							type="submit"
 							disabled={isLoading}
-							className="w-full bg-red-600 text-white p-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
+							className="w-full bg-red-600 text-white p-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							{isLoading ? "Logging in..." : "Login"}
 						</button>
