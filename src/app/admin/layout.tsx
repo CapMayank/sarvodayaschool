@@ -3,9 +3,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Providers } from "@/app/providers";
-import { SessionProvider } from "next-auth/react";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
+import { AdminLayoutClient } from "./admin-layout-client";
 
 export const metadata: Metadata = {
 	title: {
@@ -19,7 +17,7 @@ export const metadata: Metadata = {
 	},
 };
 
-export default async function AdminLayout({
+export default function AdminLayout({
 	children,
 }: {
 	children: React.ReactNode;
@@ -27,7 +25,6 @@ export default async function AdminLayout({
 	return (
 		<html lang="en">
 			<head>
-				{/* Google Analytics */}
 				<Script
 					strategy="afterInteractive"
 					src="https://www.googletagmanager.com/gtag/js?id=G-MCB7FZGZKK"
@@ -37,18 +34,16 @@ export default async function AdminLayout({
 					strategy="afterInteractive"
 					dangerouslySetInnerHTML={{
 						__html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-MCB7FZGZKK');
-            `,
+                          window.dataLayer = window.dataLayer || [];
+                          function gtag(){dataLayer.push(arguments);}
+                          gtag('js', new Date());
+                          gtag('config', 'G-MCB7FZGZKK');
+                        `,
 					}}
 				/>
 			</head>
 			<body>
-				<Providers>
-					<SessionProvider>{children}</SessionProvider>
-				</Providers>
+				<AdminLayoutClient>{children}</AdminLayoutClient>
 			</body>
 		</html>
 	);

@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-	secret: process.env.AUTH_SECRET, // ← ADD THIS LINE
+	secret: process.env.AUTH_SECRET,
 	providers: [
 		Credentials({
 			credentials: {
@@ -47,6 +47,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		signIn: "/admin",
 	},
 	callbacks: {
+		async jwt({ token, user }) {
+			if (user) {
+				token.id = user.id;
+				token.email = user.email;
+				token.name = user.name;
+			}
+			return token;
+		},
+		async session({ session, token }) {
+			if (session.user) {
+				session.user.id = token.id as string;
+				session.user.email = token.email as string;
+				session.user.name = token.name as string;
+			}
+			return session;
+		},
 		authorized({ auth, request: { nextUrl } }) {
 			const isLoggedIn = !!auth?.user;
 			const isOnDashboard = nextUrl.pathname.startsWith("/admin/dashboard");
