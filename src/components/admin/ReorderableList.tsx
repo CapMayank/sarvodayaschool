@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
 	DndContext,
 	closestCenter,
@@ -21,31 +21,30 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-interface ReorderableItem {
+interface ReorderableItemBase {
 	id: number;
-	title: string;
-	order: number;
-	image?: string;
+	order?: number;
 }
 
-interface ReorderableListProps {
-	items: ReorderableItem[];
-	onReorder: (items: ReorderableItem[]) => void;
-	children: (item: ReorderableItem, index: number) => React.ReactNode;
+interface ReorderableListProps<T extends ReorderableItemBase> {
+	items: T[];
+	onReorder: (items: T[]) => void;
+	children: (item: T, index: number) => React.ReactNode;
+}
+
+interface SortableItemProps<T extends ReorderableItemBase> {
+	id: string;
+	item: T;
+	index: number;
+	children: React.ReactNode;
 }
 
 // Sortable Item Component
-function SortableItem({
+function SortableItem<T extends ReorderableItemBase>({
 	id,
-	item,
 	index,
 	children,
-}: {
-	id: string;
-	item: ReorderableItem;
-	index: number;
-	children: React.ReactNode;
-}) {
+}: SortableItemProps<T>) {
 	const {
 		attributes,
 		listeners,
@@ -95,52 +94,61 @@ function SortableItem({
 	);
 }
 
-// Main Component
-export default function ReorderableList({
-	items,
-	onReorder,
-	children,
-}: ReorderableListProps) {
+// Main Component - Now truly generic
+function ReorderableListComponent<T extends ReorderableItemBase>(
+	{ items, onReorder, children }: ReorderableListProps<T>,
+	ref: React.ForwardedRef<HTMLDivElement>
+) {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
-			distance: 8,
+			activationConstraint: {
+				distance: 8,
+			},
 		}),
 		useSensor(KeyboardSensor, {
 			coordinateGetter: sortableKeyboardCoordinates,
 		})
 	);
 
-	const handleDragEnd = async (event: DragEndEvent) => {
-		const { active, over } = event;
+	const handleDragEnd = useCallback(
+		async (event: DragEndEvent) => {
+			const { active, over } = event;
 
-		if (!over || active.id === over.id) {
-			return;
-		}
+			if (!over || active.id === over.id) {
+				return;
+			}
 
-		const oldIndex = items.findIndex(
-			(item) => item.id.toString() === active.id
-		);
-		const newIndex = items.findIndex((item) => item.id.toString() === over.id);
+			const oldIndex = items.findIndex(
+				(item) => item.id.toString() === active.id
+			);
+			const newIndex = items.findIndex(
+				(item) => item.id.toString() === over.id
+			);
 
-		if (oldIndex === -1 || newIndex === -1) {
-			return;
-		}
+			if (oldIndex === -1 || newIndex === -1) {
+				return;
+			}
 
-		// Reorder items
-		const newItems = arrayMove(items, oldIndex, newIndex);
+			const newItems = arrayMove(items, oldIndex, newIndex);
 
-		// Update order numbers
-		const updatedItems = newItems.map((item, index) => ({
-			...item,
-			order: index,
-		}));
+			const updatedItems = newItems.map((item, index) => ({
+				...item,
+				order: index,
+			}));
 
-		setIsLoading(true);
-		onReorder(updatedItems);
-		setIsLoading(false);
-	};
+			setIsLoading(true);
+			try {
+				await onReorder(updatedItems);
+			} catch (error) {
+				console.error("Error reordering items:", error);
+			} finally {
+				setIsLoading(false);
+			}
+		},
+		[items, onReorder]
+	);
 
 	return (
 		<DndContext
@@ -152,14 +160,19 @@ export default function ReorderableList({
 				items={items.map((item) => item.id.toString())}
 				strategy={verticalListSortingStrategy}
 			>
-				<div className={`space-y-2 p-2 rounded-lg bg-gray-50`}>
+				<div
+					ref={ref}
+					className={`space-y-2 p-2 rounded-lg bg-gray-50 ${
+						isLoading ? "opacity-50 pointer-events-none" : ""
+					}`}
+				>
 					{items.length === 0 ? (
 						<div className="text-center py-8 text-gray-500">
 							<p>No items to reorder</p>
 						</div>
 					) : (
 						items.map((item, index) => (
-							<SortableItem
+							<SortableItem<T>
 								key={item.id}
 								id={item.id.toString()}
 								item={item}
@@ -174,3 +187,14 @@ export default function ReorderableList({
 		</DndContext>
 	);
 }
+
+// Apply forwardRef with proper generic typing
+const ReorderableList = React.forwardRef(ReorderableListComponent) as <
+	T extends ReorderableItemBase
+>(
+	props: ReorderableListProps<T> & {
+		ref?: React.ForwardedRef<HTMLDivElement>;
+	}
+) => React.ReactElement | null;
+
+export default ReorderableList;

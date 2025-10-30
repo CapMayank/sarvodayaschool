@@ -167,11 +167,13 @@ const Slideshow = () => {
 			</div>
 
 			{/* Modal */}
-			<Modal
-				showModal={showModal}
-				setShowModal={setShowModal}
-				imageUrl={selectedImage}
-			/>
+			{showModal && selectedImage && (
+				<Modal
+					showModal={showModal}
+					setShowModal={setShowModal}
+					imageUrl={selectedImage}
+				/>
+			)}
 		</div>
 	);
 };

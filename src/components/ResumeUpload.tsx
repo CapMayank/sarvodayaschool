@@ -37,8 +37,6 @@ export default function ResumeUpload({
 					maxFileSize: 5000000, // 5MB
 					sources: ["local", "url"],
 					autoMinimize: true,
-					clientAllowedFormats: ["pdf", "doc", "docx"],
-					maxFileSize: 5000000,
 				}}
 				onOpen={() => setIsUploading(true)}
 				onClose={() => setIsUploading(false)}
