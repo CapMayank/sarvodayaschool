@@ -89,6 +89,9 @@ const Navbar = () => {
 				<a href="/about" className="text-white my-2">
 					About
 				</a>
+				<a href="/admin" className="text-white my-2">
+					Admin
+				</a>
 			</div>
 			<div className="flex justify-center">
 				<div className="flex w-[90%] justify-between  bg-white/10 backdrop-blur-md shadow-lg rounded-lg border border-white/20 ">
@@ -125,6 +128,9 @@ const Navbar = () => {
 						</a>
 						<a href="/about" className="ml-4 text-white hover:text-yellow-300">
 							About
+						</a>
+						<a href="/admin" className="ml-4 text-white hover:text-yellow-300">
+							Admin
 						</a>
 					</div>
 					<div

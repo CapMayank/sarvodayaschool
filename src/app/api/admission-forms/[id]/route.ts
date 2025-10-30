@@ -56,3 +56,35 @@ export async function PUT(
 		);
 	}
 }
+
+// ← ADD THIS DELETE METHOD
+export async function DELETE(
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> }
+) {
+	try {
+		const { id } = await params;
+
+		const parsedId = parseInt(id);
+
+		if (isNaN(parsedId)) {
+			return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+		}
+
+		// Delete the admission form
+		await prisma.admissionForm.delete({
+			where: { id: parsedId },
+		});
+
+		return NextResponse.json(
+			{ message: "Admission form deleted successfully" },
+			{ status: 200 }
+		);
+	} catch (error) {
+		console.error("Error deleting admission form:", error);
+		return NextResponse.json(
+			{ error: "Failed to delete admission form" },
+			{ status: 500 }
+		);
+	}
+}

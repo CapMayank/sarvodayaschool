@@ -26,7 +26,12 @@ export default function NewsTab() {
 	const loadNews = async () => {
 		try {
 			const data = await apiClient.getNews(100);
-			setNews(data);
+			// Sort by publishDate in descending order (most recent first)
+			const sortedNews = data.sort(
+				(a: any, b: any) =>
+					new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
+			);
+			setNews(sortedNews);
 		} catch (error) {
 			console.error("Error loading news:", error);
 		}
@@ -96,6 +101,7 @@ export default function NewsTab() {
 
 	return (
 		<div>
+			{/* Header */}
 			<div className="flex justify-between items-center mb-6">
 				<h2 className="text-xl font-semibold">Manage News</h2>
 				<button
@@ -110,12 +116,13 @@ export default function NewsTab() {
 							publishDate: new Date().toISOString().split("T")[0],
 						});
 					}}
-					className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+					className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
 				>
 					{isAdding ? "Cancel" : "Add New"}
 				</button>
 			</div>
 
+			{/* Form Section */}
 			{isAdding && (
 				<div className="bg-white p-6 rounded-lg shadow mb-6">
 					<h3 className="text-lg font-semibold mb-4">
@@ -131,6 +138,7 @@ export default function NewsTab() {
 									setFormData({ ...formData, title: e.target.value })
 								}
 								className="w-full p-2 border rounded"
+								placeholder="Enter news title"
 								required
 							/>
 						</div>
@@ -143,6 +151,7 @@ export default function NewsTab() {
 								}
 								className="w-full p-2 border rounded"
 								rows={5}
+								placeholder="Enter news content"
 								required
 							/>
 						</div>
@@ -186,10 +195,13 @@ export default function NewsTab() {
 								className="w-full p-2 border rounded"
 								required
 							/>
+							<p className="text-xs text-gray-500 mt-1">
+								News will be displayed sorted by most recent date first
+							</p>
 						</div>
 						<button
 							type="submit"
-							className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+							className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
 						>
 							{editingId ? "Update News" : "Create News"}
 						</button>
@@ -197,39 +209,51 @@ export default function NewsTab() {
 				</div>
 			)}
 
-			<div className="bg-white rounded-lg shadow overflow-hidden">
-				<table className="min-w-full divide-y divide-gray-200">
-					<thead className="bg-gray-50">
-						<tr>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-								Image
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-								Title
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-								Category
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-								Publish Date
-							</th>
-							<th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-								Actions
-							</th>
-						</tr>
-					</thead>
-					<tbody className="bg-white divide-y divide-gray-200">
-						{news.map((newsItem) => (
-							<tr key={newsItem.id}>
-								<td className="px-6 py-4 whitespace-nowrap">
+			{/* List Section */}
+			<div className="bg-white rounded-lg shadow p-6">
+				{news.length > 0 && (
+					<div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+						<p className="text-sm text-blue-800">
+							📅 <strong>Sorted by publish date</strong> - Most recent first
+						</p>
+					</div>
+				)}
+
+				{news.length === 0 ? (
+					<div className="text-center py-12 text-gray-500">
+						<svg
+							className="mx-auto h-12 w-12 text-gray-400 mb-4"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v11a2 2 0 01-2 2zM13 5H9m0 0v4m0-4h4"
+							/>
+						</svg>
+						<p className="text-lg font-medium">No news items yet</p>
+						<p className="mt-1">Click "Add New" to create one.</p>
+					</div>
+				) : (
+					<div className="space-y-3">
+						{news.map((newsItem, index) => (
+							<div
+								key={newsItem.id}
+								className="bg-white border-2 border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
+							>
+								<div className="flex items-start gap-4">
+									{/* Image */}
 									{newsItem.imageUrl ? (
 										<img
 											src={newsItem.imageUrl}
 											alt={newsItem.title}
-											className="h-16 w-20 object-cover rounded-lg border"
+											className="h-16 w-24 object-cover rounded-lg border border-gray-200 flex-shrink-0"
 										/>
 									) : (
-										<div className="h-16 w-20 bg-gray-200 rounded-lg flex items-center justify-center">
+										<div className="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
 											<svg
 												className="w-8 h-8 text-gray-400"
 												fill="none"
@@ -245,48 +269,60 @@ export default function NewsTab() {
 											</svg>
 										</div>
 									)}
-								</td>
-								<td className="px-6 py-4">
-									<div className="max-w-md">
-										<div className="font-medium text-gray-900">
-											{newsItem.title}
-										</div>
-										<div className="text-sm text-gray-500 truncate">
-											{newsItem.content.substring(0, 60)}...
+
+									{/* Content */}
+									<div className="flex-grow min-w-0">
+										<div className="flex items-start justify-between gap-4">
+											<div className="flex-grow">
+												<div className="font-semibold text-gray-900 text-lg">
+													{newsItem.title}
+												</div>
+												<div className="text-sm text-gray-600 mt-1 line-clamp-2">
+													{newsItem.content}
+												</div>
+												<div className="flex items-center gap-3 mt-3 flex-wrap">
+													<span className="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800 font-medium">
+														{newsItem.category}
+													</span>
+													<span className="text-xs text-gray-500 font-medium">
+														📅{" "}
+														{new Date(newsItem.publishDate).toLocaleDateString(
+															"en-IN",
+															{
+																year: "numeric",
+																month: "short",
+																day: "numeric",
+															}
+														)}
+													</span>
+													{index === 0 && (
+														<span className="px-2 py-1 text-xs rounded bg-green-100 text-green-800 font-medium">
+															📌 Most Recent
+														</span>
+													)}
+												</div>
+											</div>
+
+											{/* Actions */}
+											<div className="flex gap-2 flex-shrink-0">
+												<button
+													onClick={() => handleEdit(newsItem)}
+													className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors whitespace-nowrap"
+												>
+													Edit
+												</button>
+												<button
+													onClick={() => handleDelete(newsItem.id)}
+													className="px-3 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors whitespace-nowrap"
+												>
+													Delete
+												</button>
+											</div>
 										</div>
 									</div>
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap">
-									<span className="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">
-										{newsItem.category}
-									</span>
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm">
-									{new Date(newsItem.publishDate).toLocaleDateString()}
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
-									<button
-										onClick={() => handleEdit(newsItem)}
-										className="text-blue-600 hover:text-blue-900 font-medium"
-									>
-										Edit
-									</button>
-									<button
-										onClick={() => handleDelete(newsItem.id)}
-										className="text-red-600 hover:text-red-900 font-medium"
-									>
-										Delete
-									</button>
-								</td>
-							</tr>
+								</div>
+							</div>
 						))}
-					</tbody>
-				</table>
-
-				{news.length === 0 && (
-					<div className="text-center py-12 text-gray-500">
-						<p className="text-lg font-medium">No news items yet</p>
-						<p className="mt-1">Click "Add New" to create one.</p>
 					</div>
 				)}
 			</div>

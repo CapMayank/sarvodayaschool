@@ -3,44 +3,49 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(
+export async function DELETE(
 	request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> }
+	{ params }: { params: { id: string } }
 ) {
 	try {
-		const { id } = await params;
+		const id = parseInt(params.id);
 
-		const application = await prisma.teacherApplication.findUnique({
-			where: { id: parseInt(id) },
-		});
-
-		if (!application) {
-			return NextResponse.json(
-				{ error: "Teacher application not found" },
-				{ status: 404 }
-			);
+		if (isNaN(id)) {
+			return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
 		}
 
-		return NextResponse.json(application);
-	} catch (error) {
-		console.error("Error fetching teacher application:", error);
+		// Delete the teacher application
+		await prisma.teacherApplication.delete({
+			where: { id },
+		});
+
 		return NextResponse.json(
-			{ error: "Failed to fetch teacher application" },
+			{ message: "Application deleted successfully" },
+			{ status: 200 }
+		);
+	} catch (error) {
+		console.error("Error deleting teacher application:", error);
+		return NextResponse.json(
+			{ error: "Failed to delete application" },
 			{ status: 500 }
 		);
 	}
 }
 
-export async function PUT(
+export async function PATCH(
 	request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> }
+	{ params }: { params: { id: string } }
 ) {
 	try {
-		const { id } = await params;
+		const id = parseInt(params.id);
 		const body = await request.json();
 
+		if (isNaN(id)) {
+			return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+		}
+
 		const application = await prisma.teacherApplication.update({
-			where: { id: parseInt(id) },
+			where: { id },
 			data: {
 				status: body.status,
 				notes: body.notes,
@@ -51,7 +56,7 @@ export async function PUT(
 	} catch (error) {
 		console.error("Error updating teacher application:", error);
 		return NextResponse.json(
-			{ error: "Failed to update teacher application" },
+			{ error: "Failed to update application" },
 			{ status: 500 }
 		);
 	}

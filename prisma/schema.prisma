@@ -85,22 +85,24 @@ model AdmissionForm {
 
 // Teacher Application Submission
 model TeacherApplication {
-  id                              Int     @id @default(autoincrement())
-  name                            String
-  gender                          String
-  mobileNumber                    String
-  address                         String
-  district                        String
-  block                           String
-  qualifications                  String
-  specialization                  String
-  professionalQualification       String
-  otherProfessionalQualification  String?
-  subject                         String
-  class                           String
-  experience                      Int
-  status                          String  @default("New")
-  notes                           String?
-  createdAt                       DateTime @default(now())
-  updatedAt                       DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String
+  gender    String
+  mobileNumber String
+  address   String
+  district  String
+  block     String
+  qualifications String
+  specialization String
+  professionalQualification String
+  otherProfessionalQualification String?
+  subject   String
+  class     String
+  experience Int
+  status    String   @default("New")
+  notes     String?
+  resumeUrl String?  // ← ADD THIS LINE
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+

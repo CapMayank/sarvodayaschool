@@ -10,9 +10,9 @@ export async function GET() {
 		});
 		return NextResponse.json(applications);
 	} catch (error) {
-		console.error("Error fetching teacher applications:", error);
+		console.error("Error fetching applications:", error);
 		return NextResponse.json(
-			{ error: "Failed to fetch teacher applications" },
+			{ error: "Failed to fetch applications" },
 			{ status: 500 }
 		);
 	}
@@ -21,6 +21,14 @@ export async function GET() {
 export async function POST(request: NextRequest) {
 	try {
 		const body = await request.json();
+
+		// Validate required fields
+		if (!body.name || !body.resumeUrl) {
+			return NextResponse.json(
+				{ error: "Name and resume are required" },
+				{ status: 400 }
+			);
+		}
 
 		const application = await prisma.teacherApplication.create({
 			data: {
@@ -34,19 +42,20 @@ export async function POST(request: NextRequest) {
 				specialization: body.specialization,
 				professionalQualification: body.professionalQualification,
 				otherProfessionalQualification:
-					body.otherProfessionalQualification || "",
+					body.otherProfessionalQualification || null,
 				subject: body.subject,
 				class: body.class,
 				experience: parseInt(body.experience),
-				status: "New",
+				resumeUrl: body.resumeUrl, // ← NOW INCLUDED
+				status: body.status || "New",
 			},
 		});
 
 		return NextResponse.json(application, { status: 201 });
 	} catch (error) {
-		console.error("Error creating teacher application:", error);
+		console.error("Error creating application:", error);
 		return NextResponse.json(
-			{ error: "Failed to submit teacher application" },
+			{ error: "Failed to create application" },
 			{ status: 500 }
 		);
 	}

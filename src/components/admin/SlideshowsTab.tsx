@@ -4,13 +4,15 @@
 
 import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/api-client";
-import CloudinaryUpload from "@/components/CloudinaryUpload";
 import { deleteCloudinaryImage } from "@/lib/cloudinary-helper";
+import CloudinaryUpload from "@/components/CloudinaryUpload";
+import ReorderableList from "@/components/admin/ReorderableList";
 
 export default function SlideshowsTab() {
 	const [slideshows, setSlideshows] = useState<any[]>([]);
 	const [isAdding, setIsAdding] = useState(false);
 	const [editingId, setEditingId] = useState<number | null>(null);
+	const [isReordering, setIsReordering] = useState(false);
 	const [formData, setFormData] = useState({
 		title: "",
 		imageUrl: "",
@@ -92,22 +94,47 @@ export default function SlideshowsTab() {
 		}
 	};
 
+	const handleReorder = async (reorderedItems: any[]) => {
+		setIsReordering(true);
+		try {
+			// Update all items with new order
+			for (const item of reorderedItems) {
+				await apiClient.updateSlideshow(item.id, {
+					title: item.title,
+					imageUrl: item.imageUrl,
+					isActive: item.isActive,
+					order: item.order,
+				});
+			}
+			setSlideshows(reorderedItems);
+			alert("Order updated successfully!");
+		} catch (error) {
+			console.error("Error reordering:", error);
+			alert("Failed to update order");
+			loadSlideshows(); // Reload on error
+		} finally {
+			setIsReordering(false);
+		}
+	};
+
 	return (
 		<div>
+			{/* Header */}
 			<div className="flex justify-between items-center mb-6">
-				<h2 className="text-xl font-semibold">Manage Slideshows</h2>
+				<h2 className="text-xl font-semibold">Manage Slideshows (Banners)</h2>
 				<button
 					onClick={() => {
 						setIsAdding(!isAdding);
 						setEditingId(null);
 						setFormData({ title: "", imageUrl: "", isActive: true, order: 0 });
 					}}
-					className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+					className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
 				>
 					{isAdding ? "Cancel" : "Add New"}
 				</button>
 			</div>
 
+			{/* Form Section */}
 			{isAdding && (
 				<div className="bg-white p-6 rounded-lg shadow mb-6">
 					<h3 className="text-lg font-semibold mb-4">
@@ -125,7 +152,7 @@ export default function SlideshowsTab() {
 									setFormData({ ...formData, title: e.target.value })
 								}
 								className="w-full p-2 border rounded"
-								placeholder="Banner title"
+								placeholder="Enter banner title"
 							/>
 						</div>
 						<div>
@@ -159,30 +186,10 @@ export default function SlideshowsTab() {
 								Only active slideshows will be shown on the website
 							</p>
 						</div>
-						<div>
-							<label className="block text-sm font-medium mb-2">
-								Display Order
-							</label>
-							<input
-								type="number"
-								value={formData.order}
-								onChange={(e) =>
-									setFormData({
-										...formData,
-										order: parseInt(e.target.value) || 0,
-									})
-								}
-								className="w-full p-2 border rounded"
-								min="0"
-							/>
-							<p className="text-xs text-gray-500 mt-1">
-								Lower numbers appear first (0, 1, 2, ...)
-							</p>
-						</div>
 						<button
 							type="submit"
-							disabled={!formData.imageUrl}
-							className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+							disabled={!formData.imageUrl || isReordering}
+							className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 						>
 							{editingId ? "Update Slideshow" : "Create Slideshow"}
 						</button>
@@ -190,84 +197,95 @@ export default function SlideshowsTab() {
 				</div>
 			)}
 
-			<div className="bg-white rounded-lg shadow overflow-hidden">
-				<table className="min-w-full divide-y divide-gray-200">
-					<thead className="bg-gray-50">
-						<tr>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-								Image
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-								Title
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-								Status
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-								Order
-							</th>
-							<th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-								Actions
-							</th>
-						</tr>
-					</thead>
-					<tbody className="bg-white divide-y divide-gray-200">
-						{slideshows.map((slideshow) => (
-							<tr key={slideshow.id}>
-								<td className="px-6 py-4 whitespace-nowrap">
-									<img
-										src={slideshow.imageUrl}
-										alt={slideshow.title || "Slideshow"}
-										className="h-16 w-24 object-cover rounded-lg border-2 border-gray-200"
-									/>
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap">
-									<div className="text-sm text-gray-900">
-										{slideshow.title || "—"}
-									</div>
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap">
-									<span
-										className={`px-2 py-1 text-xs font-semibold rounded ${
-											slideshow.isActive
-												? "bg-green-100 text-green-800"
-												: "bg-gray-100 text-gray-800"
-										}`}
-									>
-										{slideshow.isActive ? "Active" : "Inactive"}
-									</span>
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap">
-									<span className="px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-800">
-										{slideshow.order}
-									</span>
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
-									<button
-										onClick={() => handleEdit(slideshow)}
-										className="text-blue-600 hover:text-blue-900 font-medium"
-									>
-										Edit
-									</button>
-									<button
-										onClick={() => handleDelete(slideshow.id)}
-										className="text-red-600 hover:text-red-900 font-medium"
-									>
-										Delete
-									</button>
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
+			{/* List Section */}
+			<div className="bg-white rounded-lg shadow p-6">
+				{slideshows.length > 0 && (
+					<div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+						<p className="text-sm text-blue-800">
+							💡 <strong>Drag items to reorder them.</strong> Changes are saved
+							automatically.
+						</p>
+					</div>
+				)}
 
-				{slideshows.length === 0 && (
+				{slideshows.length === 0 ? (
 					<div className="text-center py-12 text-gray-500">
+						<svg
+							className="mx-auto h-12 w-12 text-gray-400 mb-4"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+							/>
+						</svg>
 						<p className="text-lg font-medium">No slideshows yet</p>
 						<p className="mt-1">
 							Click "Add New" to create your first slideshow.
 						</p>
 					</div>
+				) : (
+					<ReorderableList items={slideshows} onReorder={handleReorder}>
+						{(item, index) => (
+							<div className="flex items-center justify-between w-full">
+								<div className="flex items-start gap-4 flex-grow">
+									{/* Image */}
+									<img
+										src={item.imageUrl}
+										alt={item.title || "Slideshow"}
+										className="h-14 w-24 object-cover rounded-lg border border-gray-200 flex-shrink-0"
+									/>
+
+									{/* Content */}
+									<div className="flex-grow min-w-0">
+										<div className="font-medium text-gray-900 truncate">
+											{item.title || "Untitled Banner"}
+										</div>
+										<div className="text-xs text-gray-500 mt-2 space-y-1">
+											<div>
+												Status:{" "}
+												<span
+													className={`font-medium px-2 py-0.5 rounded ${
+														item.isActive
+															? "bg-green-100 text-green-800"
+															: "bg-gray-100 text-gray-800"
+													}`}
+												>
+													{item.isActive ? "Active" : "Inactive"}
+												</span>
+											</div>
+											<div>
+												Position:{" "}
+												<span className="bg-gray-100 px-2 py-0.5 rounded font-medium">
+													#{index + 1}
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								{/* Actions */}
+								<div className="flex gap-2 flex-shrink-0 ml-4">
+									<button
+										onClick={() => handleEdit(item)}
+										className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors whitespace-nowrap"
+									>
+										Edit
+									</button>
+									<button
+										onClick={() => handleDelete(item.id)}
+										className="px-3 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors whitespace-nowrap"
+									>
+										Delete
+									</button>
+								</div>
+							</div>
+						)}
+					</ReorderableList>
 				)}
 			</div>
 		</div>

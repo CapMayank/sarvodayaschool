@@ -4,13 +4,15 @@
 
 import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/api-client";
-import CloudinaryUpload from "@/components/CloudinaryUpload";
 import { deleteCloudinaryImage } from "@/lib/cloudinary-helper";
+import CloudinaryUpload from "@/components/CloudinaryUpload";
+import ReorderableList from "@/components/admin/ReorderableList";
 
 export default function AchievementsTab() {
 	const [achievements, setAchievements] = useState<any[]>([]);
 	const [isAdding, setIsAdding] = useState(false);
 	const [editingId, setEditingId] = useState<number | null>(null);
+	const [isReordering, setIsReordering] = useState(false);
 	const [formData, setFormData] = useState({
 		title: "",
 		description: "",
@@ -92,8 +94,32 @@ export default function AchievementsTab() {
 		}
 	};
 
+	const handleReorder = async (reorderedItems: any[]) => {
+		setIsReordering(true);
+		try {
+			// Update all items with new order
+			for (const item of reorderedItems) {
+				await apiClient.updateAchievement(item.id, {
+					title: item.title,
+					description: item.description,
+					imageUrl: item.imageUrl,
+					order: item.order,
+				});
+			}
+			setAchievements(reorderedItems);
+			alert("Order updated successfully!");
+		} catch (error) {
+			console.error("Error reordering:", error);
+			alert("Failed to update order");
+			loadAchievements(); // Reload on error
+		} finally {
+			setIsReordering(false);
+		}
+	};
+
 	return (
 		<div>
+			{/* Header */}
 			<div className="flex justify-between items-center mb-6">
 				<h2 className="text-xl font-semibold">Manage Achievements</h2>
 				<button
@@ -102,12 +128,13 @@ export default function AchievementsTab() {
 						setEditingId(null);
 						setFormData({ title: "", description: "", imageUrl: "", order: 0 });
 					}}
-					className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+					className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
 				>
 					{isAdding ? "Cancel" : "Add New"}
 				</button>
 			</div>
 
+			{/* Form Section */}
 			{isAdding && (
 				<div className="bg-white p-6 rounded-lg shadow mb-6">
 					<h3 className="text-lg font-semibold mb-4">
@@ -123,6 +150,7 @@ export default function AchievementsTab() {
 									setFormData({ ...formData, title: e.target.value })
 								}
 								className="w-full p-2 border rounded"
+								placeholder="Enter achievement title"
 								required
 							/>
 						</div>
@@ -137,6 +165,7 @@ export default function AchievementsTab() {
 								}
 								className="w-full p-2 border rounded"
 								rows={3}
+								placeholder="Enter achievement description"
 								required
 							/>
 						</div>
@@ -153,30 +182,10 @@ export default function AchievementsTab() {
 								<p className="text-red-600 text-sm mt-1">Image is required</p>
 							)}
 						</div>
-						<div>
-							<label className="block text-sm font-medium mb-2">
-								Display Order
-							</label>
-							<input
-								type="number"
-								value={formData.order}
-								onChange={(e) =>
-									setFormData({
-										...formData,
-										order: parseInt(e.target.value) || 0,
-									})
-								}
-								className="w-full p-2 border rounded"
-								min="0"
-							/>
-							<p className="text-xs text-gray-500 mt-1">
-								Lower numbers appear first (0, 1, 2, ...)
-							</p>
-						</div>
 						<button
 							type="submit"
-							disabled={!formData.imageUrl}
-							className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+							disabled={!formData.imageUrl || isReordering}
+							className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 						>
 							{editingId ? "Update Achievement" : "Create Achievement"}
 						</button>
@@ -184,78 +193,84 @@ export default function AchievementsTab() {
 				</div>
 			)}
 
-			<div className="bg-white rounded-lg shadow overflow-hidden">
-				<table className="min-w-full divide-y divide-gray-200">
-					<thead className="bg-gray-50">
-						<tr>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-								Image
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-								Title
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-								Description
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-								Order
-							</th>
-							<th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-								Actions
-							</th>
-						</tr>
-					</thead>
-					<tbody className="bg-white divide-y divide-gray-200">
-						{achievements.map((achievement) => (
-							<tr key={achievement.id}>
-								<td className="px-6 py-4 whitespace-nowrap">
-									<img
-										src={achievement.imageUrl}
-										alt={achievement.title}
-										className="h-16 w-16 object-cover rounded-lg border-2 border-gray-200"
-									/>
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap">
-									<div className="font-medium text-gray-900">
-										{achievement.title}
-									</div>
-								</td>
-								<td className="px-6 py-4 max-w-xs">
-									<div className="text-sm text-gray-600 line-clamp-2">
-										{achievement.description}
-									</div>
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap">
-									<span className="px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-800">
-										{achievement.order}
-									</span>
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
-									<button
-										onClick={() => handleEdit(achievement)}
-										className="text-blue-600 hover:text-blue-900 font-medium"
-									>
-										Edit
-									</button>
-									<button
-										onClick={() => handleDelete(achievement.id)}
-										className="text-red-600 hover:text-red-900 font-medium"
-									>
-										Delete
-									</button>
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
+			{/* List Section */}
+			<div className="bg-white rounded-lg shadow p-6">
+				{achievements.length > 0 && (
+					<div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+						<p className="text-sm text-blue-800">
+							💡 <strong>Drag items to reorder them.</strong> Changes are saved
+							automatically.
+						</p>
+					</div>
+				)}
 
-				{achievements.length === 0 && (
+				{achievements.length === 0 ? (
 					<div className="text-center py-12 text-gray-500">
+						<svg
+							className="mx-auto h-12 w-12 text-gray-400 mb-4"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M9 12l2 2 4-4M7 20H5a2 2 0 01-2-2V5a2 2 0 012-2h6.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2h-3.586a1 1 0 00-.707.293l-5.414-5.414a1 1 0 00-.293-.707V5a2 2 0 012-2h6.586"
+							/>
+						</svg>
 						<p className="text-lg font-medium">No achievements yet</p>
 						<p className="mt-1">
 							Click "Add New" to create your first achievement.
 						</p>
 					</div>
+				) : (
+					<ReorderableList items={achievements} onReorder={handleReorder}>
+						{(item, index) => (
+							<div className="flex items-center justify-between w-full">
+								<div className="flex items-start gap-4 flex-grow">
+									{/* Image */}
+									<img
+										src={item.imageUrl}
+										alt={item.title}
+										className="h-14 w-14 object-cover rounded-lg border border-gray-200 flex-shrink-0"
+									/>
+
+									{/* Content */}
+									<div className="flex-grow min-w-0">
+										<div className="font-medium text-gray-900 truncate">
+											{item.title}
+										</div>
+										<div className="text-sm text-gray-600 line-clamp-2">
+											{item.description}
+										</div>
+										<div className="text-xs text-gray-500 mt-2 font-medium">
+											Position:{" "}
+											<span className="bg-gray-100 px-2 py-1 rounded">
+												#{index + 1}
+											</span>
+										</div>
+									</div>
+								</div>
+
+								{/* Actions */}
+								<div className="flex gap-2 flex-shrink-0 ml-4">
+									<button
+										onClick={() => handleEdit(item)}
+										className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors whitespace-nowrap"
+									>
+										Edit
+									</button>
+									<button
+										onClick={() => handleDelete(item.id)}
+										className="px-3 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors whitespace-nowrap"
+									>
+										Delete
+									</button>
+								</div>
+							</div>
+						)}
+					</ReorderableList>
 				)}
 			</div>
 		</div>
