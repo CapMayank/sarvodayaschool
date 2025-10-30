@@ -7,7 +7,11 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"postbuild": "next-sitemap"
+		"postbuild": "next-sitemap",
+		"migrate:dev": "dotenv -e .env.local -- npx prisma migrate dev",
+		"migrate:reset": "dotenv -e .env.local -- npx prisma migrate reset",
+		"prisma:generate": "dotenv -e .env.local -- npx prisma generate",
+		"prisma:studio": "dotenv -e .env.local -- npx prisma studio"
 	},
 	"dependencies": {
 		"@fortawesome/fontawesome-svg-core": "^6.5.2",
@@ -15,6 +19,8 @@
 		"@fortawesome/free-solid-svg-icons": "^6.7.2",
 		"@fortawesome/react-fontawesome": "^0.2.2",
 		"@next/third-parties": "^15.2.2",
+		"@prisma/client": "^6.18.0",
+		"bcryptjs": "^3.0.2",
 		"class-variance-authority": "^0.7.1",
 		"cloudinary": "^2.8.0",
 		"clsx": "^2.1.1",
@@ -23,6 +29,7 @@
 		"html2canvas": "^1.4.1",
 		"lucide-react": "^0.483.0",
 		"next": "^15.2.2",
+		"next-auth": "^5.0.0-beta.30",
 		"next-cloudinary": "^6.17.0",
 		"next-sitemap": "^4.2.3",
 		"react": "^18",
@@ -35,14 +42,17 @@
 		"tailwindcss-animate": "^1.0.7"
 	},
 	"devDependencies": {
+		"@types/bcryptjs": "^2.4.6",
 		"@types/file-saver": "^2.0.7",
 		"@types/node": "^20",
 		"@types/react": "^18",
 		"@types/react-dom": "^18",
 		"@types/react-google-recaptcha": "^2.1.9",
+		"dotenv-cli": "^11.0.0",
 		"eslint": "^8",
 		"eslint-config-next": "14.2.3",
 		"postcss": "^8",
+		"prisma": "^6.18.0",
 		"tailwindcss": "^3.4.1",
 		"typescript": "^5"
 	}

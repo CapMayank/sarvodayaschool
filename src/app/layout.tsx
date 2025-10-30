@@ -4,6 +4,7 @@ import Navbar from "@/components/navbar/navbar";
 import Script from "next/script"; // Import next/script
 import "./global.css";
 import Banner from "@/components/banner/banner";
+import { Providers } from "./providers";
 
 export const metadata = {
 	title: {
@@ -42,7 +43,7 @@ export default function RootLayout({
 			</head>
 			<body>
 				<Navbar />
-				{children}
+				<Providers>{children}</Providers>
 			</body>
 		</html>
 	);
