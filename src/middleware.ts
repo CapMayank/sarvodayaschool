@@ -10,17 +10,22 @@ export function middleware(request: NextRequest) {
 	response.headers.set("Access-Control-Allow-Origin", "*");
 	response.headers.set(
 		"Access-Control-Allow-Methods",
-		"GET, POST, PUT, DELETE, OPTIONS"
+		"GET, POST, PUT, DELETE, OPTIONS, PATCH"
 	);
 	response.headers.set(
 		"Access-Control-Allow-Headers",
-		"X-Requested-With, Content-Type, Authorization"
+		"Content-Type, Authorization"
 	);
-	response.headers.set("Access-Control-Allow-Credentials", "true");
+	response.headers.set("Access-Control-Max-Age", "86400");
+
+	// Handle preflight requests
+	if (request.method === "OPTIONS") {
+		return new NextResponse(null, { headers: response.headers, status: 200 });
+	}
 
 	return response;
 }
 
 export const config = {
-	matcher: "/api/:path*",
+	matcher: "/api/:path*", // Apply to all API routes
 };
