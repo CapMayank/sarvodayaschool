@@ -32,12 +32,29 @@ export default function TeachersTab() {
 
 	const updateStatus = async (id: number, status: string, notes: string) => {
 		try {
+			// Show loading state
+			const app = applications.find((a) => a.id === id);
+			if (app) {
+				setApplications(
+					applications.map((a) => (a.id === id ? { ...a, status, notes } : a))
+				);
+			}
+
+			// Make API call
 			await apiClient.updateTeacherApplication(id, { status, notes });
+
+			// Reload to get fresh data
+			await loadApplications();
+
 			setStatusNotes("");
-			loadApplications();
+			setShowModal(false);
+
+			alert("Status updated successfully!");
 		} catch (error) {
 			console.error("Error updating application:", error);
-			alert("Failed to update status");
+			alert("Failed to update status. Please try again.");
+			// Reload on error to revert optimistic update
+			loadApplications();
 		}
 	};
 
@@ -777,13 +794,16 @@ export default function TeachersTab() {
 									<motion.button
 										whileHover={{ scale: 1.02 }}
 										whileTap={{ scale: 0.98 }}
-										onClick={() => {
-											updateStatus(
-												selectedApp.id,
-												selectedApp.status,
-												statusNotes
-											);
-											setShowModal(false);
+										onClick={async () => {
+											try {
+												await updateStatus(
+													selectedApp.id,
+													selectedApp.status,
+													statusNotes
+												);
+											} catch (error) {
+												console.error("Update failed:", error);
+											}
 										}}
 										className="flex-1 px-4 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:shadow-lg font-medium transition-all"
 									>
@@ -804,7 +824,10 @@ export default function TeachersTab() {
 									<motion.button
 										whileHover={{ scale: 1.02 }}
 										whileTap={{ scale: 0.98 }}
-										onClick={() => setShowModal(false)}
+										onClick={() => {
+											setShowModal(false);
+											setStatusNotes("");
+										}}
 										className="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium transition-colors"
 									>
 										Close

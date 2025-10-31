@@ -2,63 +2,86 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
+
+export async function PUT(
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> }
+) {
+	try {
+		const session = await auth();
+		if (!session) {
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+		}
+
+		const { id: idParam } = await params;
+		const id = parseInt(idParam);
+		const body = await request.json();
+		const { status, notes } = body;
+
+		if (!status) {
+			return NextResponse.json(
+				{ error: "Status is required" },
+				{ status: 400 }
+			);
+		}
+
+		const updated = await prisma.teacherApplication.update({
+			where: { id },
+			data: {
+				status,
+				notes: notes || null,
+			},
+		});
+
+		return NextResponse.json(updated);
+	} catch (error: any) {
+		console.error("Error updating teacher application:", error);
+
+		if (error.code === "P2025") {
+			return NextResponse.json(
+				{ error: "Application not found" },
+				{ status: 404 }
+			);
+		}
+
+		return NextResponse.json(
+			{ error: "Failed to update application" },
+			{ status: 500 }
+		);
+	}
+}
 
 export async function DELETE(
 	request: NextRequest,
 	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
-		const { id } = await params;
-		const parsedId = parseInt(id);
-
-		if (isNaN(parsedId)) {
-			return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+		const session = await auth();
+		if (!session) {
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		// Delete the teacher application
+		const { id: idParam } = await params;
+		const id = parseInt(idParam);
+
 		await prisma.teacherApplication.delete({
-			where: { id: parsedId },
+			where: { id },
 		});
 
-		return NextResponse.json(
-			{ message: "Application deleted successfully" },
-			{ status: 200 }
-		);
-	} catch (error) {
+		return NextResponse.json({ success: true });
+	} catch (error: any) {
 		console.error("Error deleting teacher application:", error);
+
+		if (error.code === "P2025") {
+			return NextResponse.json(
+				{ error: "Application not found" },
+				{ status: 404 }
+			);
+		}
+
 		return NextResponse.json(
 			{ error: "Failed to delete application" },
-			{ status: 500 }
-		);
-	}
-}
-
-export async function PATCH(
-	request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> }
-) {
-	try {
-		const { id } = await params;
-		const parsedId = parseInt(id);
-		const body = await request.json();
-
-		if (isNaN(parsedId)) {
-			return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
-		}
-
-		const application = await prisma.teacherApplication.update({
-			where: { id: parsedId },
-			data: {
-				status: body.status,
-				notes: body.notes,
-			},
-		});
-
-		return NextResponse.json(application);
-	} catch (error) {
-		console.error("Error updating teacher application:", error);
-		return NextResponse.json(
-			{ error: "Failed to update application" },
 			{ status: 500 }
 		);
 	}
