@@ -16,7 +16,6 @@ import {
 	ZoomIn,
 	Maximize2,
 } from "lucide-react";
-
 import { useSwipeable } from "react-swipeable";
 
 interface Image {
@@ -28,13 +27,13 @@ interface Image {
 	url: string;
 }
 
-const categoryTitles: Record<string, string> = {
-	Cultural_Programme: "Cultural Programme",
-	Stall: "Stall",
-	Science_Exhibition: "Science Exhibition",
-	Sports: "Sports",
-	Class_Activities: "Class Activities",
-};
+interface GalleryCategory {
+	id: number;
+	name: string;
+	title: string;
+	description: string;
+	order: number;
+}
 
 export default function CategoryGallery() {
 	const params = useParams();
@@ -43,41 +42,71 @@ export default function CategoryGallery() {
 	const [selectedImage, setSelectedImage] = useState<Image | null>(null);
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [title, setTitle] = useState("");
+	const [categoryLoading, setCategoryLoading] = useState(true);
 
+	// Fetch categories from database and match with URL
+	useEffect(() => {
+		const fetchCategoryTitle = async () => {
+			try {
+				const resolvedParams = await params;
+				const category = resolvedParams.category as string;
+
+				const res = await fetch("/api/gallery/category");
+				if (!res.ok) throw new Error("Failed to fetch categories");
+
+				const data = await res.json();
+				const categories: GalleryCategory[] = data.categories || [];
+
+				// Find category matching the URL parameter
+				const matchedCategory = categories.find((cat) => cat.name === category);
+
+				if (matchedCategory) {
+					setTitle(matchedCategory.title);
+				} else {
+					// Fallback: use formatted category name if not found
+					setTitle(category.replace(/_/g, " "));
+				}
+			} catch (error) {
+				console.error("Error fetching category title:", error);
+				// Fallback to formatted URL parameter
+				const resolvedParams = await params;
+				const category = resolvedParams.category as string;
+				setTitle(category.replace(/_/g, " "));
+			} finally {
+				setCategoryLoading(false);
+			}
+		};
+
+		fetchCategoryTitle();
+	}, [params]);
+
+	// Fetch images
 	useEffect(() => {
 		const fetchImages = async () => {
 			const resolvedParams = await params;
 			const category = resolvedParams.category as string;
 
-			fetch(`/api/gallery/${category}`)
-				.then((res) => res.json())
-				.then((data) => {
-					setImages(data.images || []);
-					setLoading(false);
-				})
-				.catch((error) => {
-					console.error("Error fetching images:", error);
-					setLoading(false);
-				});
+			try {
+				const res = await fetch(`/api/gallery/${category}`);
+				if (!res.ok) throw new Error("Failed to fetch images");
+
+				const data = await res.json();
+				setImages(data.images || []);
+			} catch (error) {
+				console.error("Error fetching images:", error);
+			} finally {
+				setLoading(false);
+			}
 		};
 
 		fetchImages();
-	}, [params]);
-
-	useEffect(() => {
-		const getTitle = async () => {
-			const resolvedParams = await params;
-			const category = resolvedParams.category as string;
-			setTitle(categoryTitles[category] || category);
-		};
-		getTitle();
 	}, [params]);
 
 	// Open lightbox
 	const openLightbox = (image: Image, index: number) => {
 		setSelectedImage(image);
 		setCurrentIndex(index);
-		document.body.style.overflow = "hidden"; // Prevent scrolling
+		document.body.style.overflow = "hidden";
 	};
 
 	// Close lightbox
@@ -163,7 +192,6 @@ export default function CategoryGallery() {
 									sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
 									className="object-cover group-hover:scale-110 transition-transform duration-300"
 								/>
-								{/* Hover overlay */}
 								<div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
 									<div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 backdrop-blur-sm rounded-full p-3">
 										<ZoomIn className="w-8 h-8 text-white" />
@@ -184,7 +212,6 @@ export default function CategoryGallery() {
 							className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
 							onClick={closeLightbox}
 						>
-							{/* Close button */}
 							<button
 								className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-50 p-2 rounded-full hover:bg-white/10"
 								onClick={(e) => {
@@ -196,12 +223,10 @@ export default function CategoryGallery() {
 								<X className="w-8 h-8" />
 							</button>
 
-							{/* Image counter */}
 							<div className="absolute top-4 left-4 text-white text-lg font-medium bg-black/50 px-4 py-2 rounded-full z-50">
 								{currentIndex + 1} / {images.length}
 							</div>
 
-							{/* Previous button */}
 							{currentIndex > 0 && (
 								<button
 									className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-50 p-3 rounded-full hover:bg-white/10"
@@ -215,7 +240,6 @@ export default function CategoryGallery() {
 								</button>
 							)}
 
-							{/* Next button */}
 							{currentIndex < images.length - 1 && (
 								<button
 									className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-50 p-3 rounded-full hover:bg-white/10"
@@ -229,7 +253,6 @@ export default function CategoryGallery() {
 								</button>
 							)}
 
-							{/* Image container */}
 							<motion.div
 								{...swipeHandlers}
 								key={selectedImage.id}
@@ -249,7 +272,6 @@ export default function CategoryGallery() {
 								/>
 							</motion.div>
 
-							{/* Navigation hints */}
 							<div className="absolute bottom-4 right-4 text-white/60 text-sm bg-black/50 px-4 py-2 rounded-lg backdrop-blur-sm">
 								<p>← → Arrow keys to navigate</p>
 								<p>ESC to close</p>
