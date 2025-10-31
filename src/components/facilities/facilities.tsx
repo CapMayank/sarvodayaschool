@@ -50,7 +50,7 @@ export default function FacilitiesSection() {
 	};
 
 	return (
-		<div className="relative w-full bg-gradient-to-b from-white to-gray-50 py-16">
+		<div className="relative w-full bg-gradient-to-br from-slate-50 via-white to-red-50/30 py-24 px-6 sm:px-6 lg:px-8 overflow-hidden">
 			{/* Header */}
 			<motion.div
 				className="text-center mb-16"

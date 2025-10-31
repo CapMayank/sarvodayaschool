@@ -6,6 +6,7 @@ type Tab =
 	| "achievements"
 	| "slideshows"
 	| "news"
+	| "gallery"
 	| "admissions"
 	| "teachers"
 	| "users";
@@ -20,6 +21,7 @@ export default function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
 		{ id: "achievements" as Tab, label: "Achievements" },
 		{ id: "slideshows" as Tab, label: "Slideshows" },
 		{ id: "news" as Tab, label: "News" },
+		{ id: "gallery" as Tab, label: "Gallery" },
 		{ id: "admissions" as Tab, label: "Admission Forms" },
 		{ id: "teachers" as Tab, label: "Teacher Applications" },
 		{ id: "users" as Tab, label: "Admin Users" }, // ← NEW

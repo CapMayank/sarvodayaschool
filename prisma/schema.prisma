@@ -106,3 +106,24 @@ model TeacherApplication {
   updatedAt DateTime @updatedAt
 }
 
+// Gallery Image Category Management
+model GalleryCategory {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  title     String
+  description String
+  order     Int     @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// YouTube Playlist Management
+model PlaylistVideo {
+  id        Int     @id @default(autoincrement())
+  youtubeId String  @unique
+  title     String
+  order     Int     @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

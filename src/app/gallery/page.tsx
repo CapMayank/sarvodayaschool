@@ -7,85 +7,101 @@ import Footer from "@/components/footer/footer";
 import { CldImage } from "next-cloudinary";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Camera, Video, ChevronRight } from "lucide-react";
+import { Camera, Video, ChevronRight, AlertCircle } from "lucide-react";
 import { CategoryGridSkeleton } from "@/components/LoadingSkeleton";
 
-// Define categories statically - loads instantly
-const staticCategories = [
-	{
-		name: "Cultural_Programme",
-		title: "Cultural Programme",
-		description: "Annual cultural celebrations and performances",
-	},
-	{
-		name: "Stall",
-		title: "Stall",
-		description: "Exhibition stalls and presentations",
-	},
-	{
-		name: "Science_Exhibition",
-		title: "Science Exhibition",
-		description: "Student science projects and innovations",
-	},
-	{
-		name: "Sports",
-		title: "Sports",
-		description: "Sports events and athletic achievements",
-	},
-	{
-		name: "Class_Activities",
-		title: "Class Activities",
-		description: "Engaging class activities and projects",
-	},
-];
+interface GalleryCategory {
+	id: number;
+	name: string;
+	title: string;
+	description: string;
+	order: number;
+}
+
+interface PlaylistVideo {
+	id: number;
+	youtubeId: string;
+	title: string;
+	order: number;
+}
+
+interface Thumbnail {
+	[key: string]: string;
+}
 
 const Gallery = () => {
-	const [thumbnails, setThumbnails] = useState<Record<string, string>>({});
-	const [loadingThumbnails, setLoadingThumbnails] = useState(true);
+	const [categories, setCategories] = useState<GalleryCategory[]>([]);
+	const [playlists, setPlaylists] = useState<PlaylistVideo[]>([]);
+	const [thumbnails, setThumbnails] = useState<Thumbnail>({});
+	const [loadingCategories, setLoadingCategories] = useState(true);
+	const [loadingPlaylists, setLoadingPlaylists] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 
-	// Fetch thumbnails in background after page loads
+	// Fetch categories from database
 	useEffect(() => {
-		fetch("/api/gallery/thumbnails")
-			.then((res) => res.json())
-			.then((data) => {
-				setThumbnails(data.thumbnails || {});
-				setLoadingThumbnails(false);
-			})
-			.catch((error) => {
-				console.error("Error fetching thumbnails:", error);
-				setLoadingThumbnails(false);
-			});
+		const fetchCategories = async () => {
+			try {
+				const res = await fetch("/api/gallery/categories");
+				if (!res.ok) throw new Error("Failed to fetch categories");
+				const data = await res.json();
+				console.log("Categories:", data.categories);
+				setCategories(data.categories || []);
+			} catch (err) {
+				console.error("Error fetching categories:", err);
+				setError("Failed to load gallery categories");
+			} finally {
+				setLoadingCategories(false);
+			}
+		};
+
+		fetchCategories();
 	}, []);
 
-	const youtubePlaylists = [
-		{
-			id: "PLLNvFiU5ntQdpRUCKAHbeLT9c2R-c8vl0",
-			title: "Functions and Events 2025-26",
-		},
-		{
-			id: "PLLNvFiU5ntQcPwDj4MTRvEutCH3LKvskQ",
-			title: "Annual Function 2024-25",
-		},
-		{
-			id: "PLLNvFiU5ntQd5nwiHP3Y8F5WKM4ywa11-",
-			title: "Republic Day 2025",
-		},
-		{
-			id: "PLLNvFiU5ntQfF-TiwEFaRJvavJMZvC6FG",
-			title: "Annual Function 2024",
-		},
-		{
-			id: "PLLNvFiU5ntQchFtrbKA7b8RwSJOGcJWV2",
-			title: "Annual Function 2023",
-		},
-	];
+	// Fetch playlists from database
+	useEffect(() => {
+		const fetchPlaylists = async () => {
+			try {
+				const res = await fetch("/api/gallery/playlists");
+				if (!res.ok) throw new Error("Failed to fetch playlists");
+				const data = await res.json();
+				setPlaylists(data.playlists || []);
+			} catch (err) {
+				console.error("Error fetching playlists:", err);
+				setError("Failed to load video playlists");
+			} finally {
+				setLoadingPlaylists(false);
+			}
+		};
+
+		fetchPlaylists();
+	}, []);
+
+	// Fetch thumbnails in background
+	useEffect(() => {
+		const fetchThumbnails = async () => {
+			try {
+				const res = await fetch("/api/gallery/thumbnails");
+				if (res.ok) {
+					const data = await res.json();
+					console.log("Thumbnails:", data.thumbnails);
+					setThumbnails(data.thumbnails || {});
+				}
+			} catch (err) {
+				console.error("Error fetching thumbnails:", err);
+			}
+		};
+
+		if (categories.length > 0) {
+			fetchThumbnails();
+		}
+	}, [categories]);
 
 	const containerVariants = {
 		hidden: { opacity: 0 },
 		visible: {
 			opacity: 1,
 			transition: {
-				staggerChildren: 0.2,
+				staggerChildren: 0.1,
 			},
 		},
 	};
@@ -120,6 +136,19 @@ const Gallery = () => {
 					</p>
 				</motion.div>
 
+				{/* Error Message */}
+				{error && (
+					<motion.div
+						initial={{ opacity: 0, y: -10 }}
+						animate={{ opacity: 1, y: 0 }}
+						className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3"
+					>
+						<AlertCircle className="w-5 h-5 text-red-600" />
+						<p className="text-red-700">{error}</p>
+					</motion.div>
+				)}
+
+				{/* Photo Collections Section */}
 				<section className="mb-20">
 					<div className="flex items-center mb-8">
 						<Camera className="w-6 h-6 text-red-600 mr-2" />
@@ -128,8 +157,13 @@ const Gallery = () => {
 						</h2>
 					</div>
 
-					{loadingThumbnails ? (
+					{loadingCategories ? (
 						<CategoryGridSkeleton />
+					) : categories.length === 0 ? (
+						<div className="text-center py-12 text-gray-500">
+							<Camera className="w-16 h-16 mx-auto mb-4 opacity-30" />
+							<p>No photo collections available yet.</p>
+						</div>
 					) : (
 						<motion.div
 							variants={containerVariants}
@@ -137,47 +171,58 @@ const Gallery = () => {
 							animate="visible"
 							className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
 						>
-							{staticCategories.map((category) => (
-								<motion.div
-									key={category.name}
-									variants={itemVariants}
-									className="group relative overflow-hidden rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300"
-								>
-									<Link href={`/gallery/${category.name}`}>
-										<div className="relative h-64 overflow-hidden">
-											{thumbnails[category.name] ? (
-												<CldImage
-													src={thumbnails[category.name]}
-													alt={category.title}
-													fill
-													sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-													className="object-cover group-hover:scale-110 transition-transform duration-500"
-												/>
-											) : (
-												<div className="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
-													<Camera className="w-16 h-16 text-red-600 opacity-50" />
+							{categories.map((category) => (
+								<div key={`category-${category.id}`}>
+									<motion.div
+										variants={itemVariants}
+										className="group relative overflow-hidden rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer h-64"
+									>
+										<Link href={`/gallery/${category.name}`}>
+											{/* Background Image Container */}
+											<div className="relative w-full h-full">
+												{/* Image */}
+												{thumbnails[category.name] ? (
+													<CldImage
+														src={thumbnails[category.name]}
+														alt={category.title}
+														fill
+														priority={false}
+														sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+														className="object-cover group-hover:scale-110 transition-transform duration-500"
+													/>
+												) : (
+													<div className="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
+														<Camera className="w-16 h-16 text-red-600 opacity-50" />
+													</div>
+												)}
+
+												{/* Dark Overlay */}
+												<div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
+
+												{/* Text Overlay */}
+												<div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+													<h3 className="text-lg font-bold mb-1 line-clamp-2">
+														{category.title}
+													</h3>
+													<p className="text-xs sm:text-sm text-gray-100 line-clamp-2">
+														{category.description}
+													</p>
 												</div>
-											)}
-											<div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-											<div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-												<h3 className="text-lg font-semibold mb-1">
-													{category.title}
-												</h3>
-												<p className="text-sm text-white/80">
-													{category.description}
-												</p>
+
+												{/* Hover Icon */}
+												<div className="absolute top-4 right-4 bg-red-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+													<ChevronRight className="w-4 h-4" />
+												</div>
 											</div>
-											<div className="absolute top-4 right-4 bg-red-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-												<ChevronRight className="w-4 h-4" />
-											</div>
-										</div>
-									</Link>
-								</motion.div>
+										</Link>
+									</motion.div>
+								</div>
 							))}
 						</motion.div>
 					)}
 				</section>
 
+				{/* Video Highlights Section */}
 				<section>
 					<div className="flex items-center mb-8">
 						<Video className="w-6 h-6 text-red-600 mr-2" />
@@ -186,34 +231,52 @@ const Gallery = () => {
 						</h2>
 					</div>
 
-					<motion.div
-						variants={containerVariants}
-						initial="hidden"
-						animate="visible"
-						className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-					>
-						{youtubePlaylists.map((playlist, index) => (
-							<motion.div
-								key={index}
-								variants={itemVariants}
-								className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
-							>
-								<div className="aspect-video">
-									<iframe
-										src={`https://www.youtube.com/embed/videoseries?list=${playlist.id}`}
-										title={playlist.title}
-										allowFullScreen
-										className="w-full h-full"
-									></iframe>
+					{loadingPlaylists ? (
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+							{[...Array(4)].map((_, i) => (
+								<div
+									key={`skeleton-${i}`}
+									className="bg-gray-200 rounded-xl h-48 animate-pulse"
+								/>
+							))}
+						</div>
+					) : playlists.length === 0 ? (
+						<div className="text-center py-12 text-gray-500">
+							<Video className="w-16 h-16 mx-auto mb-4 opacity-30" />
+							<p>No video playlists available yet.</p>
+						</div>
+					) : (
+						<motion.div
+							variants={containerVariants}
+							initial="hidden"
+							animate="visible"
+							className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+						>
+							{playlists.map((playlist) => (
+								<div key={`playlist-${playlist.id}`}>
+									<motion.div
+										variants={itemVariants}
+										className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+									>
+										<div className="aspect-video bg-black">
+											<iframe
+												src={`https://www.youtube.com/embed/videoseries?list=${playlist.youtubeId}`}
+												title={playlist.title}
+												allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+												allowFullScreen
+												className="w-full h-full"
+											></iframe>
+										</div>
+										<div className="p-4">
+											<h3 className="text-lg font-semibold text-gray-800 line-clamp-2">
+												{playlist.title}
+											</h3>
+										</div>
+									</motion.div>
 								</div>
-								<div className="p-4">
-									<h3 className="text-lg font-semibold text-gray-800">
-										{playlist.title}
-									</h3>
-								</div>
-							</motion.div>
-						))}
-					</motion.div>
+							))}
+						</motion.div>
+					)}
 				</section>
 			</div>
 

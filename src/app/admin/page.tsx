@@ -63,28 +63,28 @@ export default function AdminLogin() {
 	return (
 		<>
 			<Header title="Admin" />
-			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-rose-100">
-				<div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-					<h1 className="text-3xl font-bold mb-6 text-center text-red-600">
+			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-rose-50 to-orange-50 px-4">
+				<div className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md border border-red-50">
+					<h1 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
 						Admin Login
 					</h1>
 
 					{error && (
-						<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+						<div className="bg-gradient-to-r from-red-50 to-rose-50 border-l-4 border-red-500 text-red-700 px-5 py-4 rounded-xl mb-6 shadow-sm">
 							{error}
 						</div>
 					)}
 
-					<form onSubmit={handleLogin} className="space-y-4">
+					<form onSubmit={handleLogin} className="space-y-6">
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-2">
+							<label className="block text-sm font-semibold text-gray-700 mb-2.5">
 								Email
 							</label>
 							<input
 								type="email"
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
-								className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition"
+								className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all duration-300 bg-gray-50 hover:bg-white hover:border-gray-300 text-gray-900 placeholder-gray-400"
 								placeholder="admin@example.com"
 								required
 								disabled={isLoading}
@@ -93,14 +93,14 @@ export default function AdminLogin() {
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-2">
+							<label className="block text-sm font-semibold text-gray-700 mb-2.5">
 								Password
 							</label>
 							<input
 								type="password"
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
-								className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition"
+								className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all duration-300 bg-gray-50 hover:bg-white hover:border-gray-300 text-gray-900 placeholder-gray-400"
 								placeholder="Enter your password"
 								required
 								disabled={isLoading}
@@ -111,7 +111,7 @@ export default function AdminLogin() {
 						<button
 							type="submit"
 							disabled={isLoading}
-							className="w-full bg-red-600 text-white p-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+							className="w-full bg-gradient-to-r from-red-600 to-rose-600 text-white py-4 rounded-xl font-semibold text-base hover:from-red-700 hover:to-rose-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg shadow-red-500/30 hover:shadow-xl hover:shadow-red-500/40 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-lg mt-2"
 						>
 							{isLoading ? "Logging in..." : "Login"}
 						</button>
