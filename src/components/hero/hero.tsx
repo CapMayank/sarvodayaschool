@@ -9,7 +9,7 @@ const Hero = () => {
 	return (
 		<div className="flex justify-center py-8 md:py-16 ">
 			<Image
-				className="absolute inset-0 z-[-1] w-full h-screen object-cover"
+				className="absolute inset-0 z-[-1] w-full h-[180vh] xl:h-screen object-cover"
 				src="/bg.jpg"
 				alt="School Building"
 				width={2000}
@@ -17,11 +17,11 @@ const Hero = () => {
 				priority
 			></Image>
 			{/* Dark Overlay */}
-			<div className="absolute inset-0 z-[-1] h-screen  bg-gradient-to-b from-transparent to-black/60"></div>
-			<div className="absolute inset-0 z-[-1] h-screen bg-blue-600/5 "></div>
+			<div className="absolute inset-0 z-[-1] h-[180vh] xl:h-screen  bg-gradient-to-b from-transparent to-black/60"></div>
+			<div className="absolute inset-0 z-[-1] h-[180vh] xl:h-screen bg-blue-600/5 "></div>
 
 			{/* <div className="absolute inset-0 z-[-1] h-screen  bg-gradient-to-b from-black/30 to-transparent"></div> */}
-			<div className="absolute inset-0 z-[-1] h-screen  bg-linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent)"></div>
+			<div className="absolute inset-0 z-[-1] h-[180vh] xl:h-screen  bg-linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent)"></div>
 
 			<div className="w-[90%]  md:flex items-center ">
 				<div className=" md:w-[60%] h-full">
