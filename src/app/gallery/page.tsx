@@ -44,10 +44,8 @@ const Gallery = () => {
 				const res = await fetch("/api/gallery/categories");
 				if (!res.ok) throw new Error("Failed to fetch categories");
 				const data = await res.json();
-				console.log("Categories:", data.categories);
 				setCategories(data.categories || []);
 			} catch (err) {
-				console.error("Error fetching categories:", err);
 				setError("Failed to load gallery categories");
 			} finally {
 				setLoadingCategories(false);
@@ -66,7 +64,6 @@ const Gallery = () => {
 				const data = await res.json();
 				setPlaylists(data.playlists || []);
 			} catch (err) {
-				console.error("Error fetching playlists:", err);
 				setError("Failed to load video playlists");
 			} finally {
 				setLoadingPlaylists(false);
@@ -83,7 +80,6 @@ const Gallery = () => {
 				const res = await fetch("/api/gallery/thumbnails");
 				if (res.ok) {
 					const data = await res.json();
-					console.log("Thumbnails:", data.thumbnails);
 					setThumbnails(data.thumbnails || {});
 				}
 			} catch (err) {

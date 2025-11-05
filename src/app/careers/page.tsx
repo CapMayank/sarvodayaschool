@@ -188,7 +188,7 @@ const Careers: React.FC = () => {
 			const data = await response.json();
 			setSubmitMessage({
 				type: "success",
-				text: `🎉 Application submitted successfully! Your Application ID: ${data.id}. We will review your application and contact you soon.`,
+				text: `Application submitted successfully! We will review your application and contact you soon.`,
 			});
 
 			// Reset form ONLY after successful submission

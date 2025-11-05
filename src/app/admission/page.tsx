@@ -222,7 +222,7 @@ export default function Admission() {
 			const data = await response.json();
 			setSubmitMessage({
 				type: "success",
-				text: `Application submitted successfully! Your Application ID: ${data.id}`,
+				text: `Application submitted successfully! We will review your application and contact you soon.`,
 			});
 
 			// Reset form
