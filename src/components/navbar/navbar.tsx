@@ -18,7 +18,7 @@ const Navbar = () => {
 	return (
 		<div className="flex flex-col justify-center my-6 md:mb-8">
 			<div className="flex items-center max-sm:flex-col md:ml-12 md:mx-4 md:flex-row xl:ml-16 xl:mx-8 text-center justify-center">
-				<div className="p-1 mr-4">
+				<div className="p-2 mr-4">
 					<Link href="/">
 						<Image
 							src="/logoMin.png"
@@ -93,9 +93,9 @@ const Navbar = () => {
 					Admin
 				</a>
 			</div>
-			<div className="flex justify-center">
-				<div className="flex w-[90%] justify-between  bg-white/10 backdrop-blur-md shadow-lg rounded-lg border border-white/20 ">
-					<div className="p-6 text-xl heading-text-yellow  font-bold justify-center gap-5 hidden md:flex">
+			{/* <div className="flex justify-center ">
+				<div className="flex w-[90%] justify-between  bg-white/10 backdrop-blur-md shadow-lg rounded-lg   ">
+					<div className="p-6 text-lg heading-text-yellow  font-bold justify-center gap-5 hidden md:flex">
 						<a href="/" className="ml-4 text-white hover:text-yellow-300">
 							Home
 						</a>
@@ -140,11 +140,63 @@ const Navbar = () => {
 						<a href="/admission">Get Admission</a>
 					</div>
 				</div>
+			</div> */}
+			<div className="flex justify-center">
+				<div className="flex w-[90%] justify-between bg-white/10 backdrop-blur-md shadow-lg rounded-lg">
+					{/* links row: was p-6 text-lg gap-5 */}
+					<div className="py-4 px-2 text-lg heading-text-yellow font-bold justify-center gap-4 hidden md:flex">
+						<a href="/" className="ml-4 text-white hover:text-yellow-300">
+							Home
+						</a>
+						<a
+							href="/admission"
+							className="ml-4 text-white hover:text-yellow-300"
+						>
+							Admission
+						</a>
+						<a href="/result" className="ml-4 text-white hover:text-yellow-300">
+							Result
+						</a>
+						<a
+							href="/careers"
+							className="ml-4 text-white hover:text-yellow-300"
+						>
+							Careers
+						</a>
+						<a
+							href="/gallery"
+							className="ml-4 text-white hover:text-yellow-300"
+						>
+							Gallery
+						</a>
+						<a
+							href="/contact"
+							className="ml-4 text-white hover:text-yellow-300"
+						>
+							Contact Us
+						</a>
+						<a href="/about" className="ml-4 text-white hover:text-yellow-300">
+							About
+						</a>
+						<a href="/admin" className="ml-4 text-white hover:text-yellow-300">
+							Admin
+						</a>
+					</div>
+
+					{/* CTA: was p-6 */}
+					<div
+						className="py-4 px-4 text-white font-black bg-red-500 hidden md:block cursor-pointer"
+						style={{ clipPath: "polygon(10% 0%, 100% 0, 100% 100%, 0% 100%)" }}
+					>
+						<a href="/admission">Get Admission</a>
+					</div>
+				</div>
 			</div>
+
 			<Link href="/careers">
 				<div className="flex justify-center md:my-1">
 					{" "}
-					<div className=" marquee p-2 text-red-500 text-2xl font-sans flex md:w-[90%] justify-between  bg-white/10 backdrop-blur-md shadow-lg rounded-lg border border-white/20">
+					<div className=" marquee p-2 text-red-500 text-lg font-sans flex md:w-[90%] justify-between  bg-white/10 backdrop-blur-md shadow-lg rounded-lg">
 						<div className="marquee-content">
 							Teacher Requirement 2025-26 Subject-
 							Maths/Bio/Physics/Chemistry/Sanskrit/Social-Science/Commerce/Hindi/English
