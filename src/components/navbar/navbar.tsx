@@ -144,7 +144,7 @@ const Navbar = () => {
 			<Link href="/careers">
 				<div className="flex justify-center md:my-1">
 					{" "}
-					<div className=" marquee p-2 text-red-600 text-2xl font-sans flex md:w-[90%] justify-between  bg-white/10 backdrop-blur-md shadow-lg rounded-lg border border-white/20">
+					<div className=" marquee p-2 text-red-500 text-2xl font-sans flex md:w-[90%] justify-between  bg-white/10 backdrop-blur-md shadow-lg rounded-lg border border-white/20">
 						<div className="marquee-content">
 							Teacher Requirement 2025-26 Subject-
 							Maths/Bio/Physics/Chemistry/Sanskrit/Social-Science/Commerce/Hindi/English

@@ -6,38 +6,25 @@ import Banner from "@/components/banner/banner";
 import Link from "next/link";
 
 const Hero = () => {
-	const quickLinks = [
-		{
-			heading: "Teacher Recruitment for session 2025-26",
-			link: "/careers",
-			info: "Join our team for the next academic session.",
-		},
-		{
-			heading: "Get Admission Now for session 2025-26",
-			link: "/admission",
-			info: "Secure your spot for the upcoming academic year.",
-		},
-		{
-			heading: "Result for session 2024-25 is out now",
-			link: "/result",
-			info: "Check your results for annual examination.",
-		},
-	];
-
 	return (
-		<div className="flex  justify-center my-8 ">
+		<div className="flex justify-center py-8 md:py-16 ">
 			<Image
-				className="absolute inset-0 z-[-1] w-full h-[1555px] md:h-[1555px] lg:h-full object-cover"
-				src="/bg.webp"
+				className="absolute inset-0 z-[-1] w-full h-screen object-cover"
+				src="/bg.jpg"
 				alt="School Building"
 				width={2000}
 				height={1333}
+				priority
 			></Image>
 			{/* Dark Overlay */}
-			<div className="absolute inset-0 z-[-1] h-[1555px] md:h-[1555px] lg:h-full bg-black/20"></div>
+			<div className="absolute inset-0 z-[-1] h-screen  bg-gradient-to-b from-transparent to-black/60"></div>
+			<div className="absolute inset-0 z-[-1] h-screen bg-blue-600/5 "></div>
 
-			<div className="w-[90%]  md:flex justify-center items-center sm:flex-col md:flex-row z-0">
-				<div className=" md:w-[60%] ">
+			{/* <div className="absolute inset-0 z-[-1] h-screen  bg-gradient-to-b from-black/30 to-transparent"></div> */}
+			<div className="absolute inset-0 z-[-1] h-screen  bg-linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent)"></div>
+
+			<div className="w-[90%]  md:flex items-center ">
+				<div className=" md:w-[60%] h-full">
 					<h1 className="heading-text-yellow text-4xl font-black sm:mb-2 md:mb-8">
 						WELCOME TO SARVODAYA ENGLISH HIGHER SECONDARY SCHOOL
 					</h1>
@@ -61,46 +48,6 @@ const Hero = () => {
 							Visit Campus
 						</button>
 					</a>
-				</div>
-				<div className="flex justify-center md:w-[40%] mt-4 md:mt-0">
-					{/* <div className="flex flex-col w-full mt-8 backdrop-blur-sm bg-white/30 p-4 rounded-md ">
-						<h2 className="heading-text-yellow text-center text-2xl font-black mb-4">
-							Quick Links
-						</h2>
-						<div className="flex flex-col items-center max-h-80 overflow-y-auto scrollbar-hide">
-							{quickLinks.map((link, index) => (
-								<a
-									key={index}
-									href={link.link}
-									className="text-white my-2 w-full px-4 py-2 bg-red-500 rounded-md hover:bg-red-600 transition-colors"
-								>
-									<h3 className="font-semibold">{link.heading}</h3>
-									<p className="text-sm">{link.info}</p>
-								</a>
-							))}
-						</div>
-					</div> */}
-
-					<div className="flex flex-col w-full mt-8 backdrop-blur-md bg-white/30 p-4 rounded-xl shadow-lg border border-white/20">
-						<h2 className="text-center text-3xl font-extrabold heading-text-yellow mb-6 tracking-wide uppercase">
-							Quick Links
-						</h2>
-
-						<div className="flex flex-col items-center max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-							{quickLinks.map((link, index) => (
-								<a
-									key={index}
-									href={link.link}
-									className="w-full flex flex-col items-start p-2 my-1 bg-gradient-to-r from-red-600/100 to-red-500/10 text-white rounded-lg shadow-md transition-all duration-300 hover:bg-red-800/80 hover:shadow-lg"
-								>
-									<h3 className="font-bold text-lg">{link.heading}</h3>
-									<p className="hidden md:block text-sm opacity-90">
-										{link.info}
-									</p>
-								</a>
-							))}
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>

@@ -161,7 +161,7 @@ export default function CategoryGallery() {
 		<>
 			<Header title={title} />
 
-			<div className="max-w-7xl mx-auto px-4 py-12 mt-5">
+			<div className="max-w-7xl mx-auto px-4 py-12 bg-gray-100 md:bg-transparent mt-5">
 				<h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">
 					{title}
 				</h1>
