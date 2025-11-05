@@ -18,10 +18,10 @@ const Hero = () => {
 			></Image>
 			{/* Dark Overlay */}
 			<div className="absolute inset-0 z-[-1] h-[180vh] xl:h-[150vh] 2xl:h-screen  bg-gradient-to-b from-transparent to-black/90"></div>
-			<div className="absolute inset-0 z-[-1] h-[180vh] xl:h-screen bg-blue-600/5 "></div>
+			<div className="absolute inset-0 z-[-1] h-[180vh] xl:h-[150vh] 2xl:h-screen bg-blue-600/5 "></div>
 
 			{/* <div className="absolute inset-0 z-[-1] h-screen  bg-gradient-to-b from-black/30 to-transparent"></div> */}
-			<div className="absolute inset-0 z-[-1] h-[180vh] xl:h-screen  bg-linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent)"></div>
+			<div className="absolute inset-0 z-[-1] h-[180vh] xl:h-[150vh] 2xl:h-screen  bg-linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent)"></div>
 
 			<div className="w-[90%]  md:flex items-center ">
 				<div className=" md:w-[60%] h-full">
